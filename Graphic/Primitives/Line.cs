@@ -27,7 +27,7 @@ namespace maze.Graphic.Primitives
             Points = Array.Empty<Point>();
             List<Point> points = new();
 
-            for (float i = Math.Min(A.X, B.X); i <= Math.Max(A.X, B.X); i += 1f)
+            for (float i = Math.Min(A.X, B.X); i <= Math.Max(A.X, B.X); i += 0.5f)
             {
                 points.Add(new(
                     new(i, ((i - A.X) * (B.Y - A.Y) / (B.X - A.X)) + A.Y, ((i - A.X) * (B.Z - A.Z) / (B.X - A.X)) + A.Z),
@@ -36,7 +36,7 @@ namespace maze.Graphic.Primitives
                 ));
             }
 
-            for (float i = Math.Min(A.Y, B.Y); i < Math.Max(A.Y, B.Y); i += 1f)
+            for (float i = Math.Min(A.Y, B.Y); i < Math.Max(A.Y, B.Y); i += 0.5f)
             {
                 points.Add(new(
                     new(((i - A.Y) * (B.X - A.X) / (B.Y - A.Y)) + A.X, i, ((i - A.Y) * (B.Z - A.Z) / (B.Y - A.Y)) + A.Z),
@@ -45,7 +45,7 @@ namespace maze.Graphic.Primitives
                 ));
             }
 
-            for (float i = Math.Min(A.Z, B.Z); i < Math.Max(A.Z, B.Z); i += 1f)
+            for (float i = Math.Min(A.Z, B.Z); i < Math.Max(A.Z, B.Z); i += 0.5f)
             {
                 points.Add(new(
                     new(((i - A.Z) * (B.X - A.X) / (B.Z - A.Z)) + A.X, ((i - A.Z) * (B.Y - A.Y) / (B.Z - A.Z)) + A.Y, i),

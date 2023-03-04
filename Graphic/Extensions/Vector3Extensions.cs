@@ -8,68 +8,56 @@ namespace maze.Graphic.Extensions
     {
         public static float Angle(this Vector3 vector1, Vector3 vector2)
         {
-            return (float)Math.Acos(Vector3.Dot(vector1, vector2) / (vector1.Length() * vector2.Length()));
+            // return (float)Math.Acos(Vector3.Dot(vector1, vector2) / (vector1.Length() * vector2.Length()));
+            return (float)Math.Acos((Math.Pow(vector1.Length(), 2) + Math.Pow(vector2.Length(), 2) - Math.Pow((vector1 - vector2).Length(), 2)) / (2 * vector1.Length() * vector2.Length()));
         }
 
         public static Vector3 RotateX(this Vector3 vector, Vector3 pivot, float angle)
         {
-            Matrix4x4 matrix = new(
-                1, 0, 0, 0,
-                0, (float)Math.Cos(angle), (float)-Math.Sin(angle), 0,
-                0, (float)Math.Sin(angle), (float)Math.Cos(angle), 0,
-                0, 0, 0, 1);
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationX(angle, pivot));
+        }
 
-            return Vector3.Transform(vector - pivot, matrix) + pivot;
+        public static Vector3 RotateX(this Vector3 vector, float angle)
+        {
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationX(angle));
         }
 
         public static Vector3 RotateY(this Vector3 vector, Vector3 pivot, float angle)
         {
-            Matrix4x4 matrix = new(
-                (float)Math.Cos(angle), 0, (float)Math.Sin(angle), 0,
-                0, 1, 0, 0,
-                (float)-Math.Sin(angle), 0, (float)Math.Cos(angle), 0,
-                0, 0, 0, 1);
-
-            return Vector3.Transform(vector - pivot, matrix) + pivot;
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationY(angle, pivot));
+        }
+        public static Vector3 RotateY(this Vector3 vector, float angle)
+        {
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationY(angle));
         }
 
         public static Vector3 RotateZ(this Vector3 vector, Vector3 pivot, float angle)
         {
-            Matrix4x4 matrix = new(
-                (float)Math.Cos(angle), (float)-Math.Sin(angle), 0, 0,
-                (float)Math.Sin(angle), (float)Math.Cos(angle), 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
-
-            return Vector3.Transform(vector - pivot, matrix) + pivot;
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationZ(angle, pivot));
         }
 
-        public static Vector4 Projection(this Vector3 pointPosition, Screen screen)
+        public static Vector3 RotateZ(this Vector3 vector, float angle)
         {
-            Matrix4x4 projectionMatrix = new(
-                2 * screen.Near / (screen.Right - screen.Left), 0, 0, -screen.Near * (screen.Right + screen.Left) / (screen.Right - screen.Left),
-                0, 2 * screen.Near / (screen.Top - screen.Bottom), 0, -screen.Near * (screen.Top + screen.Bottom) / (screen.Top - screen.Bottom),
-                0, 0, -(screen.Far + screen.Near) / (screen.Far - screen.Near), 2 * screen.Far * screen.Near / (screen.Near - screen.Far),
-                0, 0, -1, 0
-            );
+            return Vector3.Transform(vector, Matrix4x4.CreateRotationZ(angle));
+        }
 
-            Matrix4x4 invertedCameraTransforamtion = new(
-                screen.CameraRight.X, screen.CameraRight.Y, screen.CameraRight.Z, -((screen.CameraRight.X * screen.CameraPosition.X) + (screen.CameraUp.X * screen.CameraPosition.Y) + (screen.CameraForward.X * screen.CameraPosition.Z)),
-                screen.CameraUp.X, screen.CameraUp.Y, screen.CameraUp.Z, -((screen.CameraRight.Y * screen.CameraPosition.X) + (screen.CameraUp.Y * screen.CameraPosition.Y) + (screen.CameraForward.Y * screen.CameraPosition.Z)),
-                screen.CameraForward.X, screen.CameraForward.Y, screen.CameraForward.Z, -((screen.CameraRight.Z * screen.CameraPosition.X) + (screen.CameraUp.Z * screen.CameraPosition.Y) + (screen.CameraForward.Z * screen.CameraPosition.Z)),
-                0, 0, 0, 1
-            );
+        public static Vector3 Projection(this Vector3 vector, Screen screen)
+        {
+            Vector3 a = vector - screen.CameraPosition;
 
-            // Matrix4x4 pointTransformation = new(
-            //     1, 0, 0, pointPosition.X,
-            //     0, 1, 0, pointPosition.Y,
-            //     0, 0, 1, pointPosition.Z,
-            //     0, 0, 0, 1
-            // );
+            Vector3 direction = screen.CameraForward;
 
-            Vector4 position = new(pointPosition, 1);
+            float angleY = new Vector3(direction.X, 0, direction.Z).Angle(Vector3.UnitZ);
+            angleY = screen.CameraForward.X >= 0 ? -angleY : angleY;
+            a = a.RotateY(angleY);
 
-            return Vector4.Transform(position, projectionMatrix * invertedCameraTransforamtion);
+            direction = direction.RotateY(angleY);
+
+            float angleX = new Vector3(0, direction.Y, direction.Z).Angle(Vector3.UnitZ);
+            angleX = screen.CameraForward.Y <= 0 ? -angleX : angleX;
+            a = a.RotateX(angleX);
+
+            return a;
         }
     }
 }

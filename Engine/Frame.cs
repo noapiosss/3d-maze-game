@@ -69,16 +69,14 @@ namespace Maze.Engine
         {
             foreach (Point point in _points)
             {
-                Vector4 p = point.Position.Projection(_screen);
-
-                if (p.Z < _screen.Near ||
-                    p.Z > _screen.Far)
+                Vector3 p = point.Position.Projection(_screen);
+                if (p.Z > _renderDistance || p.Z < _screen.FocalDistance)
                 {
                     continue;
                 }
 
-                int x = (int)p.X + (_screen.Width / 2);
-                int y = (int)p.Y + (_screen.Height / 2);
+                int x = (int)(p.X * _screen.FocalDistance / p.Z) + (_screen.Width / 2);
+                int y = (int)(p.Y * _screen.FocalDistance / p.Z) + (_screen.Height / 2);
 
                 float distance = Vector3.Distance(_screen.CameraPosition, point.Position);
 
@@ -115,7 +113,7 @@ namespace Maze.Engine
             Clear();
             ProjectPoints();
 
-            for (int j = 0; j < _screen.Height; ++j)
+            for (int j = _screen.Height - 1; j >= 0; --j)
             {
                 for (int i = 0; i < _screen.Width; ++i)
                 {
@@ -126,7 +124,6 @@ namespace Maze.Engine
             }
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"point position: {_points[0].Position}");
         }
     }
 }
