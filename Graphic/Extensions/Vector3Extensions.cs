@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using Maze.Engine;
+using maze.Engine;
 
 namespace maze.Graphic.Extensions
 {

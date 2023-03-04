@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Maze.Engine
+namespace maze.Engine
 {
     public class Screen
     {

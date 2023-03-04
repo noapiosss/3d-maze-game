@@ -4,7 +4,7 @@ using System.Numerics;
 using maze.Graphic.Extensions;
 using maze.Graphic.Primitives;
 
-namespace Maze.Engine
+namespace maze.Engine
 {
     public class Frame
     {
@@ -16,6 +16,7 @@ namespace Maze.Engine
         private readonly ConsoleColor[,] _colors;
         private readonly float[,] _depthBuffer;
         private readonly List<Point> _points = new();
+        private readonly ConsoleHelper _consoleHelper;
 
         public Frame(Screen screen, float renderDistance)
         {
@@ -24,6 +25,7 @@ namespace Maze.Engine
             _pixels = new char[screen.Width, screen.Height];
             _colors = new ConsoleColor[screen.Width, screen.Height];
             _depthBuffer = new float[screen.Width, screen.Height];
+            _consoleHelper = new(screen.Height, screen.Width);
 
             for (int i = 0; i < _screen.Width; ++i)
             {
@@ -109,19 +111,10 @@ namespace Maze.Engine
 
         public void Render()
         {
-            Console.Clear();
             Clear();
             ProjectPoints();
 
-            for (int j = _screen.Height - 1; j >= 0; --j)
-            {
-                for (int i = 0; i < _screen.Width; ++i)
-                {
-                    Console.ForegroundColor = _colors[i, j];
-                    Console.Write(_pixels[i, j]);
-                }
-                Console.WriteLine();
-            }
+            _consoleHelper.Draw(_pixels, _colors);
 
             Console.ForegroundColor = ConsoleColor.White;
         }
