@@ -12,7 +12,9 @@ namespace maze.Engine
         public int Width { get; set; }
         public float FocalDistance { get; set; }
 
-        public Screen(Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight, int height, int widht, float focalDistance)
+        public float RenderDistance { get; set; }
+
+        public Screen(Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight, int height, int widht, float focalDistance, float renderDistance)
         {
             CameraPosition = cameraPosition;
             CameraForward = cameraForward;
@@ -21,6 +23,7 @@ namespace maze.Engine
             Height = height;
             Width = widht;
             FocalDistance = focalDistance;
+            RenderDistance = renderDistance;
         }
 
     }

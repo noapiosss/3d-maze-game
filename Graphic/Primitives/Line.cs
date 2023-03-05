@@ -1,60 +1,76 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using maze.Engine;
+using maze.Graphic.Extensions;
 
 namespace maze.Graphic.Primitives
 {
-    public class Line
+    public class Line : Primitive
     {
-        public Vector3 A { get; set; }
-        public Vector3 B { get; set; }
-        public Vector3 Normal { get; set; }
-        public ConsoleColor Color { get; set; }
-        public Point[] Points { get; set; }
-
-        public Line(Vector3 a, Vector3 b, Vector3 normal, ConsoleColor color = ConsoleColor.White)
+        public Line(Vector3 a, Vector3 b, ConsoleColor color)
         {
-            A = a;
-            B = b;
-            Normal = normal;
+            Vertices = new Vector3[] { a, b };
             Color = color;
-
-            GeneratePoints();
         }
 
-        private void GeneratePoints()
+        public override ICollection<ProjectedVertice> Project(Screen screen)
         {
-            Points = Array.Empty<Point>();
-            List<Point> points = new();
+            return ProjectLine(Vertices[0], Vertices[1], screen);
+        }
 
-            for (float i = Math.Min(A.X, B.X); i <= Math.Max(A.X, B.X); i += 0.5f)
+        private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Screen screen)
+        {
+            List<ProjectedVertice> projections = new();
+
+            Vector3 a = v1.RotationInOZ(screen);
+            Vector3 b = v2.RotationInOZ(screen);
+
+            float x1 = a.X * screen.FocalDistance / a.Z;
+            float y1 = a.Y * screen.FocalDistance / a.Z;
+
+            float x2 = b.X * screen.FocalDistance / b.Z;
+            float y2 = b.Y * screen.FocalDistance / b.Z;
+
+            float xMin = Math.Min(x1, x2);
+            float xMax = Math.Max(x1, x2);
+
+            float yMin = Math.Min(y1, y2);
+            float yMax = Math.Max(y1, y2);
+
+            for (float x = xMin; x <= xMax; ++x)
             {
-                points.Add(new(
-                    new(i, ((i - A.X) * (B.Y - A.Y) / (B.X - A.X)) + A.Y, ((i - A.X) * (B.Z - A.Z) / (B.X - A.X)) + A.Z),
-                    Normal,
-                    Color
-                ));
+                float y = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
+
+                float originX = ((a.Z * b.X) - (a.X * b.Z)) / ((screen.FocalDistance * (b.X - a.X) / x) - (b.Z - a.Z));
+                float originY = ((originX - a.X) * (b.Y - a.Y) / (b.X - a.X)) + a.Y;
+                float originZ = ((originX - a.X) * (b.Z - a.Z) / (b.X - a.X)) + a.Z;
+
+                float distance = Vector3.Distance(Vector3.Zero, new(originX, originY, originZ));
+
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, distance, screen, out ProjectedVertice projection))
+                {
+                    projections.Add(projection);
+                };
             }
 
-            for (float i = Math.Min(A.Y, B.Y); i < Math.Max(A.Y, B.Y); i += 0.5f)
+            for (float y = yMin; y <= yMax; ++y)
             {
-                points.Add(new(
-                    new(((i - A.Y) * (B.X - A.X) / (B.Y - A.Y)) + A.X, i, ((i - A.Y) * (B.Z - A.Z) / (B.Y - A.Y)) + A.Z),
-                    Normal,
-                    Color
-                ));
+                float x = ((y - y1) * (x2 - x1) / (y2 - y1)) + x1;
+
+                float originX = ((a.Z * b.X) - (a.X * b.Z)) / ((screen.FocalDistance * (b.X - a.X) / x) - (b.Z - a.Z));
+                float originY = ((originX - a.X) * (b.Y - a.Y) / (b.X - a.X)) + a.Y;
+                float originZ = ((originX - a.X) * (b.Z - a.Z) / (b.X - a.X)) + a.Z;
+
+                float distance = Vector3.Distance(Vector3.Zero, new(originX, originY, originZ));
+
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, distance, screen, out ProjectedVertice projection))
+                {
+                    projections.Add(projection);
+                };
             }
 
-            for (float i = Math.Min(A.Z, B.Z); i < Math.Max(A.Z, B.Z); i += 0.5f)
-            {
-                points.Add(new(
-                    new(((i - A.Z) * (B.X - A.X) / (B.Z - A.Z)) + A.X, ((i - A.Z) * (B.Y - A.Y) / (B.Z - A.Z)) + A.Y, i),
-                    Normal,
-                    Color
-                ));
-            }
-
-            Points = points.ToArray();
+            return projections;
         }
     }
 }

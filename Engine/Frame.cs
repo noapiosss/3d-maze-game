@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using maze.Graphic.Extensions;
 using maze.Graphic.Primitives;
 
 namespace maze.Engine
@@ -11,17 +10,16 @@ namespace maze.Engine
         private static readonly char[] _brightnessGradient = new char[] { '@', '%', '$', '#', '!', '=', ';', ':', '~', '-', ',', '.' };
         public Screen _screen;
         private readonly List<Vector3> _light = new();
-        private readonly float _renderDistance;
+        private readonly float[,] _depthBuffer;
+        private readonly List<Primitive> _primitives = new();
         private readonly char[,] _pixels;
         private readonly ConsoleColor[,] _colors;
-        private readonly float[,] _depthBuffer;
-        private readonly List<Point> _points = new();
         private readonly ConsoleHelper _consoleHelper;
 
-        public Frame(Screen screen, float renderDistance)
+
+        public Frame(Screen screen)
         {
             _screen = screen;
-            _renderDistance = renderDistance;
             _pixels = new char[screen.Width, screen.Height];
             _colors = new ConsoleColor[screen.Width, screen.Height];
             _depthBuffer = new float[screen.Width, screen.Height];
@@ -33,7 +31,7 @@ namespace maze.Engine
                 {
                     _pixels[i, j] = ' ';
                     _colors[i, j] = ConsoleColor.White;
-                    _depthBuffer[i, j] = _renderDistance;
+                    _depthBuffer[i, j] = screen.RenderDistance;
                 }
             }
         }
@@ -43,52 +41,27 @@ namespace maze.Engine
             _light.Add(light);
         }
 
-        public void AddPoints(Point[] points)
+        public void AddPrimitive(Primitive primitive)
         {
-            foreach (Point point in points)
-            {
-                _points.Add(point);
-            }
-        }
-
-        public void AddPolygon3s(Polygon3[] polygon3s)
-        {
-            foreach (Polygon3 polygon3 in polygon3s)
-            {
-                _points.AddRange(polygon3.Points);
-            }
-        }
-
-        public void AddPolygon4s(Polygon4[] polygon4s)
-        {
-            foreach (Polygon4 polygon4 in polygon4s)
-            {
-                _points.AddRange(polygon4.Points);
-            }
+            _primitives.Add(primitive);
         }
 
         private void ProjectPoints()
         {
-            foreach (Point point in _points)
+            foreach (Primitive primitive in _primitives)
             {
-                Vector3 p = point.Position.Projection(_screen);
-                if (p.Z > _renderDistance || p.Z < _screen.FocalDistance)
+                foreach (ProjectedVertice projection in primitive.Project(_screen))
                 {
-                    continue;
-                }
-
-                int x = (int)(p.X * _screen.FocalDistance / p.Z) + (_screen.Width / 2);
-                int y = (int)(p.Y * _screen.FocalDistance / p.Z) + (_screen.Height / 2);
-
-                float distance = Vector3.Distance(_screen.CameraPosition, point.Position);
-
-                if (x >= 0 && x < _screen.Width && y >= 0 && y < _screen.Height && _depthBuffer[x, y] > distance)
-                {
-                    _colors[x, y] = point.Color;
-                    _pixels[x, y] = CalculateBrightness(point, _light[0]);
-                    _depthBuffer[x, y] = distance;
+                    FillPixel(projection);
                 }
             }
+        }
+
+        private void FillPixel(ProjectedVertice projection)
+        {
+            _depthBuffer[projection.X, projection.Y] = projection.Distance;
+            _colors[projection.X, projection.Y] = projection.Color;
+            _pixels[projection.X, projection.Y] = '+';
         }
 
         private void Clear()
@@ -98,22 +71,15 @@ namespace maze.Engine
                 for (int j = _screen.Height - 1; j >= 0; --j)
                 {
                     _pixels[i, j] = ' ';
-                    _depthBuffer[i, j] = _renderDistance;
+                    _depthBuffer[i, j] = _screen.RenderDistance;
                 }
             }
-        }
-
-        private static char CalculateBrightness(Point point, Vector3 light)
-        {
-            float angle = (point.Position - light).Angle(point.Normal);
-            return _brightnessGradient[(int)Math.Round((_brightnessGradient.Length - 1) * angle / Math.PI)]; ;
         }
 
         public void Render()
         {
             Clear();
             ProjectPoints();
-
             _consoleHelper.Draw(_pixels, _colors);
 
             Console.ForegroundColor = ConsoleColor.White;
