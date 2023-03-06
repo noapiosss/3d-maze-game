@@ -7,7 +7,7 @@ using maze.Graphic.Primitives.Interfaces;
 
 namespace maze.Graphic.Primitives
 {
-    public abstract class Primitive : IProjectible, IBrightable
+    public abstract class Primitive : IProjectible
     {
         public Vector3 Normal { get; protected set; }
         public Vector3[] Vertices { get; protected set; }
@@ -36,7 +36,7 @@ namespace maze.Graphic.Primitives
                 Vector3.Distance(projection.Origin, Vector3.Zero) < screen.RenderDistance;
         }
 
-        public float GetBrightness(Vector3 pointPosition, Vector3 pointNormal, Vector3 light)
+        public static float GetBrightness(Vector3 pointPosition, Vector3 pointNormal, Vector3 light)
         {
             if (pointNormal == Vector3.Zero)
             {
