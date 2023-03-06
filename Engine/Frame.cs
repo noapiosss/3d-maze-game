@@ -50,7 +50,7 @@ namespace maze.Engine
         {
             foreach (Primitive primitive in _primitives)
             {
-                foreach (ProjectedVertice projection in primitive.Project(_screen))
+                foreach (ProjectedVertice projection in primitive.Project(_screen, _light[0]))
                 {
                     FillPixel(projection);
                 }
@@ -59,9 +59,9 @@ namespace maze.Engine
 
         private void FillPixel(ProjectedVertice projection)
         {
-            _depthBuffer[projection.X, projection.Y] = projection.Distance;
+            _depthBuffer[projection.X, projection.Y] = Vector3.Distance(projection.Origin, Vector3.Zero);
             _colors[projection.X, projection.Y] = projection.Color;
-            _pixels[projection.X, projection.Y] = '+';
+            _pixels[projection.X, projection.Y] = _brightnessGradient[(int)Math.Round((_brightnessGradient.Length - 1) * projection.Brightness)];
         }
 
         private void Clear()

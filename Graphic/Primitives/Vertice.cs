@@ -12,19 +12,19 @@ namespace maze.Graphic.Primitives
         {
             Vertices = new Vector3[] { position };
             Color = color;
+            Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen)
+        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 p = Vertices[0].RotationInOZ(screen);
+            Vector3 origin = Vertices[0].RotationInOZ(screen);
 
-            float x = p.X * screen.FocalDistance / p.Z;
-            float y = p.Y * screen.FocalDistance / p.Z;
-            float distance = Vector3.Distance(Vector3.Zero, p);
+            float x = origin.X * screen.FocalDistance / origin.Z;
+            float y = origin.Y * screen.FocalDistance / origin.Z;
 
-            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, distance, screen, out ProjectedVertice projection))
+            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
             {
                 projections.Add(projection);
             }

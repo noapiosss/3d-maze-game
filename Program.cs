@@ -15,11 +15,11 @@ Frame frame = new(screen);
 // Line line2 = new(new(0, -20, 150), new(0, 20, 150), ConsoleColor.Green);
 // frame.AddPrimitive(line2);
 
-CubeEdges cubeEdges = new(new(0, 0, 150), 50, ConsoleColor.Red);
-frame.AddPrimitive(cubeEdges);
+// CubeEdges cubeEdges = new(new(0, 0, 150), 5, ConsoleColor.Red);
+// frame.AddPrimitive(cubeEdges);
 
-// Cube cube = new(new(0, 0, 150), 50, ConsoleColor.Green);
-// frame.AddPrimitive(cube);
+Cube cube = new(new(0, 0, 150), 50, ConsoleColor.Green);
+frame.AddPrimitive(cube);
 
 
 frame.AddLight(new(0, -500, 0));
@@ -60,6 +60,14 @@ while (true)
     if (key.Key == ConsoleKey.A)
     {
         frame._screen.MoveSide(-10);
+    }
+    if (key.Key == ConsoleKey.Spacebar)
+    {
+        frame._screen.MoveUp(10);
+    }
+    if (key.Key == ConsoleKey.C)
+    {
+        frame._screen.MoveUp(-10);
     }
 
     frame.Render();

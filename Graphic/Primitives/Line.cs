@@ -12,14 +12,15 @@ namespace maze.Graphic.Primitives
         {
             Vertices = new Vector3[] { a, b };
             Color = color;
+            Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen)
+        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
-            return ProjectLine(Vertices[0], Vertices[1], screen);
+            return ProjectLine(Vertices[0], Vertices[1], screen, light);
         }
 
-        private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Screen screen)
+        private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Screen screen, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
@@ -42,13 +43,14 @@ namespace maze.Graphic.Primitives
             {
                 float y = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
-                float originX = ((a.Z * b.X) - (a.X * b.Z)) / ((screen.FocalDistance * (b.X - a.X) / x) - (b.Z - a.Z));
-                float originY = ((originX - a.X) * (b.Y - a.Y) / (b.X - a.X)) + a.Y;
-                float originZ = ((originX - a.X) * (b.Z - a.Z) / (b.X - a.X)) + a.Z;
+                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                        Vector3.Zero,
+                        new(x, y, screen.FocalDistance),
+                        Vector3Extensions.GetAnyLineNormal(a, b),
+                        a
+                );
 
-                float distance = Vector3.Distance(Vector3.Zero, new(originX, originY, originZ));
-
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, distance, screen, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };
@@ -58,13 +60,14 @@ namespace maze.Graphic.Primitives
             {
                 float x = ((y - y1) * (x2 - x1) / (y2 - y1)) + x1;
 
-                float originX = ((a.Z * b.X) - (a.X * b.Z)) / ((screen.FocalDistance * (b.X - a.X) / x) - (b.Z - a.Z));
-                float originY = ((originX - a.X) * (b.Y - a.Y) / (b.X - a.X)) + a.Y;
-                float originZ = ((originX - a.X) * (b.Z - a.Z) / (b.X - a.X)) + a.Z;
+                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                        Vector3.Zero,
+                        new(x, y, screen.FocalDistance),
+                        Vector3Extensions.GetAnyLineNormal(a, b),
+                        a
+                );
 
-                float distance = Vector3.Distance(Vector3.Zero, new(originX, originY, originZ));
-
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, distance, screen, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };

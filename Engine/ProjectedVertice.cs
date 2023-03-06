@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace maze.Engine
 {
@@ -6,7 +7,8 @@ namespace maze.Engine
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public float Distance { get; set; }
+        public Vector3 Origin { get; set; }
+        public float Brightness { get; set; }
         public ConsoleColor Color { get; set; }
     }
 }

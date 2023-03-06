@@ -23,6 +23,11 @@ namespace maze.Graphic.Extensions
             screen.CameraPosition += screen.CameraForward * distance;
         }
 
+        public static void MoveUp(this Screen screen, float distance)
+        {
+            screen.CameraPosition += screen.CameraUp * distance;
+        }
+
         public static void MoveSide(this Screen screen, float distance)
         {
             screen.CameraPosition += screen.CameraRight * distance;

@@ -89,5 +89,46 @@ namespace maze.Graphic.Extensions
 
             return Vector3.Transform(vector, rotationMatrix1 * rotationMatrix2);
         }
+
+        public static Vector3 LineLineIntersection(Vector3 a1, Vector3 b1, Vector3 a2, Vector3 b2)
+        {
+            Vector3 line1Direction = b1 - a1;
+            Vector3 line2Direction = b2 - a2;
+
+            Vector3 cross1 = Vector3.Cross(line1Direction, line2Direction);
+            Vector3 cross2 = Vector3.Cross(a2 - a1, line1Direction);
+
+            float denominator = cross1.Length();
+            float numerator = Vector3.Dot(cross2, cross1) / denominator;
+
+            return a2 + (line2Direction * numerator);
+        }
+
+        public static Vector3 LinePlaneIntersection(Vector3 a, Vector3 b, Vector3 planeNormal, Vector3 planePoint)
+        {
+            Vector3 lineDriection = b - a;
+
+            float denominator = Vector3.Dot(planeNormal, lineDriection);
+            float numerator = Vector3.Dot(planeNormal, planePoint - a);
+            float distance = numerator / denominator;
+
+            return a + (lineDriection * distance);
+        }
+
+        public static Vector3 GetAnyLineNormal(Vector3 a, Vector3 b)
+        {
+            Vector3 lineDirection = Vector3.Normalize(b - a);
+            Vector3 arbitraryVector = Vector3.UnitX;
+
+            Vector3 normal = Vector3.Cross(lineDirection, arbitraryVector);
+
+            if (normal == Vector3.Zero)
+            {
+                arbitraryVector = Vector3.UnitY;
+                normal = Vector3.Cross(lineDirection, arbitraryVector);
+            }
+
+            return Vector3.Normalize(normal);
+        }
     }
 }

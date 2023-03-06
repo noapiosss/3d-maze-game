@@ -8,19 +8,21 @@ namespace maze.Graphic.Primitives
 {
     public class Polygon : Primitive
     {
+
         public Polygon(Vector3 a, Vector3 b, Vector3 c, ConsoleColor color)
         {
             Vertices = new Vector3[] { a, b, c };
             Indexes = new (int, int, int)[] { (0, 1, 2) };
             Color = color;
+            Normal = Vector3.Normalize(Vector3.Cross(Vertices[1] - Vertices[0], Vertices[2] - Vertices[0]));
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen)
+        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
-            return ProjectPolygon(Vertices[0], Vertices[1], Vertices[2], screen);
+            return ProjectPolygon(Vertices[0], Vertices[1], Vertices[2], screen, light);
         }
 
-        private ICollection<ProjectedVertice> ProjectPolygon(Vector3 a, Vector3 b, Vector3 c, Screen screen)
+        private ICollection<ProjectedVertice> ProjectPolygon(Vector3 a, Vector3 b, Vector3 c, Screen screen, Vector3 light)
         {
             Vector3 aProjection = a.RotationInOZ(screen);
             Vector3 bProjection = b.RotationInOZ(screen);
@@ -28,12 +30,12 @@ namespace maze.Graphic.Primitives
 
             if (aProjection.X > bProjection.X)
             {
-                return ProjectPolygon(b, a, c, screen);
+                return ProjectPolygon(b, a, c, screen, light);
             }
 
             if (bProjection.X > cProjection.X)
             {
-                return ProjectPolygon(a, c, b, screen);
+                return ProjectPolygon(a, c, b, screen, light);
             }
 
             List<ProjectedVertice> projection = new();
@@ -52,7 +54,7 @@ namespace maze.Graphic.Primitives
                 float c1 = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
                 float b1 = ((x - x1) * (y3 - y1) / (x3 - x1)) + y1;
 
-                projection.AddRange(ProjectLine(x, c1, b1, screen));
+                projection.AddRange(ProjectLine(x, c1, b1, screen, light));
             }
 
             for (float x = x2; x <= x3; ++x)
@@ -60,13 +62,13 @@ namespace maze.Graphic.Primitives
                 float a1 = ((x - x2) * (y3 - y2) / (x3 - x2)) + y2;
                 float b1 = ((x - x1) * (y3 - y1) / (x3 - x1)) + y1;
 
-                projection.AddRange(ProjectLine(x, a1, b1, screen));
+                projection.AddRange(ProjectLine(x, a1, b1, screen, light));
             }
 
             return projection;
         }
 
-        private IEnumerable<ProjectedVertice> ProjectLine(float x, float y1, float y2, Screen screen)
+        private IEnumerable<ProjectedVertice> ProjectLine(float x, float y1, float y2, Screen screen, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
@@ -75,30 +77,20 @@ namespace maze.Graphic.Primitives
 
             for (float y = yMin; y <= yMax; ++y)
             {
-                float originZ = CalculateOriginZ(Vertices[0], Vertices[1], Vertices[2], x, y, screen.FocalDistance);
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, originZ, screen, out ProjectedVertice projection))
+                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                    Vector3.Zero,
+                    new(x, y, screen.FocalDistance),
+                    Normal,
+                    Vertices[0]
+                );
+
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };
             }
 
             return projections;
-        }
-
-        private static float CalculateOriginZ(Vector3 v1, Vector3 v2, Vector3 v3, float xp, float yp, float zp)
-        {
-            float a21 = v2.X - v1.X;
-            float a22 = v3.X - v1.X;
-            float a23 = v2.Y - v1.Y;
-            float a31 = v3.Y - v1.Y;
-            float a32 = v2.Z - v1.Z;
-            float a33 = v3.Z - v1.Z;
-
-            float xk = (a22 * a33) - (a23 * a32);
-            float yk = (a23 * a31) - (a21 * a23);
-            float zk = (a21 * a32) - (a22 * a31);
-
-            return ((v1.X * xk) + (v1.Y * yk) + (v1.Z * zk)) / ((xk * xp / zp) + (yk * yp / zp) + zk);
         }
     }
 }
