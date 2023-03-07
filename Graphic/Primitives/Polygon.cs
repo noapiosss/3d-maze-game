@@ -24,48 +24,54 @@ namespace maze.Graphic.Primitives
 
         private ICollection<ProjectedVertice> ProjectPolygon(Vector3 a, Vector3 b, Vector3 c, Screen screen, Vector3 light)
         {
-            Vector3 aProjection = a.RotationInOZ(screen);
-            Vector3 bProjection = b.RotationInOZ(screen);
-            Vector3 cProjection = c.RotationInOZ(screen);
+            Vector3 aRotated = a.RotationInOZ(screen);
+            Vector3 bRotated = b.RotationInOZ(screen);
+            Vector3 cRotated = c.RotationInOZ(screen);
 
-            if (aProjection.X > bProjection.X)
+            List<ProjectedVertice> projections = new();
+
+            float x1 = aRotated.X * screen.FocalDistance / aRotated.Z;
+            float y1 = aRotated.Y * screen.FocalDistance / aRotated.Z;
+
+            float x2 = bRotated.X * screen.FocalDistance / bRotated.Z;
+            float y2 = bRotated.Y * screen.FocalDistance / bRotated.Z;
+
+            float x3 = cRotated.X * screen.FocalDistance / cRotated.Z;
+            float y3 = cRotated.Y * screen.FocalDistance / cRotated.Z;
+
+            if (x1 > x2)
             {
-                return ProjectPolygon(b, a, c, screen, light);
+                (x1, x2, y1, y2) = (x2, x1, y2, y1);
             }
 
-            if (bProjection.X > cProjection.X)
+            if (x2 > x3)
             {
-                return ProjectPolygon(a, c, b, screen, light);
+                (x3, x2, y3, y2) = (x2, x3, y2, y3);
             }
 
-            List<ProjectedVertice> projection = new();
+            if (x1 > x2)
+            {
+                (x1, x2, y1, y2) = (x2, x1, y2, y1);
+            }
 
-            float x1 = aProjection.X;
-            float y1 = aProjection.Y;
-
-            float x2 = bProjection.X;
-            float y2 = bProjection.Y;
-
-            float x3 = cProjection.X;
-            float y3 = cProjection.Y;
 
             for (float x = x1; x <= x2; ++x)
             {
-                float c1 = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
                 float b1 = ((x - x1) * (y3 - y1) / (x3 - x1)) + y1;
+                float c1 = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
-                projection.AddRange(ProjectLine(x, c1, b1, screen, light));
+                projections.AddRange(ProjectLine(x, c1, b1, screen, light));
             }
 
             for (float x = x2; x <= x3; ++x)
             {
-                float a1 = ((x - x2) * (y3 - y2) / (x3 - x2)) + y2;
                 float b1 = ((x - x1) * (y3 - y1) / (x3 - x1)) + y1;
+                float a1 = ((x - x2) * (y3 - y2) / (x3 - x2)) + y2;
 
-                projection.AddRange(ProjectLine(x, a1, b1, screen, light));
+                projections.AddRange(ProjectLine(x, a1, b1, screen, light));
             }
 
-            return projection;
+            return projections;
         }
 
         private IEnumerable<ProjectedVertice> ProjectLine(float x, float y1, float y2, Screen screen, Vector3 light)
@@ -80,11 +86,12 @@ namespace maze.Graphic.Primitives
                 Vector3 origin = Vector3Extensions.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
-                    Normal,
-                    Vertices[0]
+                    Vertices[0].RotationInOZ(screen),
+                    Vertices[1].RotationInOZ(screen),
+                    Vertices[2].RotationInOZ(screen)
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };

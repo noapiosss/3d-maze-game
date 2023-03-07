@@ -1,20 +1,25 @@
+using System;
+using System.Numerics;
 using maze.Engine;
 
 namespace maze.Graphic.Extensions
 {
     public static class ScreenExtensions
     {
-        public static void RotateX(this Screen screen, float angle)
+        public static void LookUp(this Screen screen, float angle)
         {
-            screen.CameraForward = screen.CameraForward.RotateX(angle);
-            screen.CameraUp = screen.CameraUp.RotateX(angle);
-            screen.CameraRight = screen.CameraRight.RotateX(angle);
+            float nextAngle = screen.CameraForward.Angle(Vector3.UnitY) + angle;
+            if (nextAngle is < 0 or > (float)Math.PI)
+            {
+                return;
+            }
+
+            screen.CameraForward = screen.CameraForward.RotateAround(screen.CameraRight, angle);
         }
 
-        public static void RotateY(this Screen screen, float angle)
+        public static void LookSide(this Screen screen, float angle)
         {
             screen.CameraForward = screen.CameraForward.RotateY(angle);
-            screen.CameraUp = screen.CameraUp.RotateY(angle);
             screen.CameraRight = screen.CameraRight.RotateY(angle);
         }
 

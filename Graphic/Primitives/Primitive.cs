@@ -17,14 +17,14 @@ namespace maze.Graphic.Primitives
 
         public abstract ICollection<ProjectedVertice> Project(Screen screen, Vector3 light);
 
-        protected bool ProjectedVerticeIsInsideScreen(int x, int y, Vector3 origin, Screen screen, Vector3 light, out ProjectedVertice projection)
+        protected bool ProjectedVerticeIsInsideScreen(int x, int y, Vector3 origin, Vector3 originNormal, Screen screen, Vector3 light, out ProjectedVertice projection)
         {
             projection = new()
             {
                 X = x + (screen.Width / 2),
                 Y = y + (screen.Height / 2),
                 Origin = origin,
-                Brightness = GetBrightness(origin, Normal, light),
+                Brightness = GetBrightness(origin, originNormal, light.RotationInOZ(screen)),
                 Color = Color
             };
 

@@ -15,14 +15,34 @@ Frame frame = new(screen);
 // Line line2 = new(new(0, -20, 150), new(0, 20, 150), ConsoleColor.Green);
 // frame.AddPrimitive(line2);
 
-// CubeEdges cubeEdges = new(new(0, 0, 150), 5, ConsoleColor.Red);
-// frame.AddPrimitive(cubeEdges);
+// CubeEdges cubeEdges1 = new(new(0, 10, 100), 21, ConsoleColor.White);
+// frame.AddPrimitive(cubeEdges1);
 
-Cube cube = new(new(0, 0, 150), 50, ConsoleColor.Green);
-frame.AddPrimitive(cube);
+// Cube cube1 = new(new(0, 10, 100), 20, ConsoleColor.Red);
+// frame.AddPrimitive(cube1);
+
+// CubeEdges cubeEdges2 = new(new(-30, 10, 100), 21, ConsoleColor.White);
+// frame.AddPrimitive(cubeEdges2);
+
+// Cube cube2 = new(new(-30, 10, 100), 20, ConsoleColor.Green);
+// frame.AddPrimitive(cube2);
+
+CubeEdges cubeEdges3 = new(new(30, 10, 100), 21, ConsoleColor.White);
+frame.AddPrimitive(cubeEdges3);
+
+Sphere sphere = new(new(0, 10, 130), 20, ConsoleColor.DarkYellow);
+frame.AddPrimitive(sphere);
+
+Cube cube3 = new(new(30, 10, 100), 20, ConsoleColor.Blue);
+frame.AddPrimitive(cube3);
+
+// Polygon floor1 = new(new(-100, 0, 50), new(-100, 0, 250), new(100, 0, 250), ConsoleColor.Gray);
+// Polygon floor2 = new(new(-100, 0, 50), new(100, 0, 250), new(100, 0, 50), ConsoleColor.Gray);
+// frame.AddPrimitive(floor1);
+// frame.AddPrimitive(floor2);
 
 
-frame.AddLight(new(0, -500, 0));
+frame.AddLight(new(200, 200, 50));
 frame.Render();
 
 while (true)
@@ -31,19 +51,19 @@ while (true)
 
     if (key.Key == ConsoleKey.UpArrow)
     {
-        frame._screen.RotateX(-0.10000f);
+        frame._screen.LookUp(0.05000f);
     }
     if (key.Key == ConsoleKey.DownArrow)
     {
-        frame._screen.RotateX(0.10000f);
+        frame._screen.LookUp(-0.05000f);
     }
     if (key.Key == ConsoleKey.RightArrow)
     {
-        frame._screen.RotateY(0.10000f);
+        frame._screen.LookSide(0.05000f);
     }
     if (key.Key == ConsoleKey.LeftArrow)
     {
-        frame._screen.RotateY(-0.10000f);
+        frame._screen.LookSide(-0.05000f);
     }
     if (key.Key == ConsoleKey.W)
     {

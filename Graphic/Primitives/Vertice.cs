@@ -24,7 +24,7 @@ namespace maze.Graphic.Primitives
             float x = origin.X * screen.FocalDistance / origin.Z;
             float y = origin.Y * screen.FocalDistance / origin.Z;
 
-            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
+            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
             {
                 projections.Add(projection);
             }

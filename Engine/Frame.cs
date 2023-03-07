@@ -7,11 +7,12 @@ namespace maze.Engine
 {
     public class Frame
     {
-        private static readonly char[] _brightnessGradient = new char[] { '@', '%', '$', '#', '!', '=', ';', ':', '~', '-', ',', '.' };
+        private static readonly char[] _brightnessGradient = " .:-=+*#%@".ToCharArray();
+        //private static readonly char[] _brightnessGradient = " .`:,;'_^\"\\></-!~=)(|j?}{][ti+l7v1%yrfcJ32uIC$zwo96sngaT5qpkYVOL40&mG8*xhedbZUSAQPFDXWK#RNEHBM@".ToCharArray();
         public Screen _screen;
         private readonly List<Vector3> _light = new();
-        private readonly float[,] _depthBuffer;
         private readonly List<Primitive> _primitives = new();
+        private readonly float[,] _depthBuffer;
         private readonly char[,] _pixels;
         private readonly ConsoleColor[,] _colors;
         private readonly ConsoleHelper _consoleHelper;
@@ -46,7 +47,7 @@ namespace maze.Engine
             _primitives.Add(primitive);
         }
 
-        private void ProjectPoints()
+        private void Project()
         {
             foreach (Primitive primitive in _primitives)
             {
@@ -59,9 +60,14 @@ namespace maze.Engine
 
         private void FillPixel(ProjectedVertice projection)
         {
-            _depthBuffer[projection.X, projection.Y] = Vector3.Distance(projection.Origin, Vector3.Zero);
-            _colors[projection.X, projection.Y] = projection.Color;
-            _pixels[projection.X, projection.Y] = _brightnessGradient[(int)Math.Round((_brightnessGradient.Length - 1) * projection.Brightness)];
+            float distance = Vector3.Distance(projection.Origin, Vector3.Zero);
+
+            if (_depthBuffer[projection.X, projection.Y] > distance)
+            {
+                _depthBuffer[projection.X, projection.Y] = distance;
+                _colors[projection.X, projection.Y] = projection.Color;
+                _pixels[projection.X, projection.Y] = _brightnessGradient[(int)Math.Round((_brightnessGradient.Length - 1) * projection.Brightness)];
+            }
         }
 
         private void Clear()
@@ -79,7 +85,7 @@ namespace maze.Engine
         public void Render()
         {
             Clear();
-            ProjectPoints();
+            Project();
             _consoleHelper.Draw(_pixels, _colors);
 
             Console.ForegroundColor = ConsoleColor.White;

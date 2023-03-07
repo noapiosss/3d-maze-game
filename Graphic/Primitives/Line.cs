@@ -44,13 +44,13 @@ namespace maze.Graphic.Primitives
                 float y = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
                 Vector3 origin = Vector3Extensions.LinePlaneIntersection(
-                        Vector3.Zero,
-                        new(x, y, screen.FocalDistance),
-                        Vector3Extensions.GetAnyLineNormal(a, b),
-                        a
+                    Vector3.Zero,
+                    new(x, y, screen.FocalDistance),
+                    Vector3Extensions.GetAnyLineNormal(a, b),
+                    a
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };
@@ -61,13 +61,13 @@ namespace maze.Graphic.Primitives
                 float x = ((y - y1) * (x2 - x1) / (y2 - y1)) + x1;
 
                 Vector3 origin = Vector3Extensions.LinePlaneIntersection(
-                        Vector3.Zero,
-                        new(x, y, screen.FocalDistance),
-                        Vector3Extensions.GetAnyLineNormal(a, b),
-                        a
+                    Vector3.Zero,
+                    new(x, y, screen.FocalDistance),
+                    Vector3Extensions.GetAnyLineNormal(a, b),
+                    a
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };
