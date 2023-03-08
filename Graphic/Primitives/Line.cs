@@ -10,14 +10,14 @@ namespace maze.Graphic.Primitives
     {
         public Line(Vector3 a, Vector3 b, ConsoleColor color)
         {
-            Vertices = new Vector3[] { a, b };
+            GlobalVertices = new Vector3[] { a, b };
             Color = color;
             Normal = Vector3.Zero;
         }
 
         public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
-            return ProjectLine(Vertices[0], Vertices[1], screen, light);
+            return ProjectLine(GlobalVertices[0], GlobalVertices[1], screen, light);
         }
 
         private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Screen screen, Vector3 light)

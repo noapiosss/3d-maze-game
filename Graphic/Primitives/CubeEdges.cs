@@ -7,36 +7,25 @@ namespace maze.Graphic.Primitives
 {
     public class CubeEdges : Primitive
     {
-        public CubeEdges(Vector3 center, float sideLength, ConsoleColor color)
+        public CubeEdges(Vector3 pivot, float sideLength, ConsoleColor color)
         {
             float d = sideLength / 2;
-            Vertices = new Vector3[]
+
+            Pivot = new(pivot, Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX);
+
+            LocalVertices = new Vector3[]
             {
-                new(center.X - d, center.Y - d, center.Z - d),//0 ---
-                new(center.X - d, center.Y - d, center.Z + d),//1 --+
-                new(center.X - d, center.Y + d, center.Z - d),//2 -+-
-                new(center.X - d, center.Y + d, center.Z + d),//3 -++
-                new(center.X + d, center.Y - d, center.Z - d),//4 +--
-                new(center.X + d, center.Y - d, center.Z + d),//5 +-+
-                new(center.X + d, center.Y + d, center.Z - d),//6 ++-
-                new(center.X + d, center.Y + d, center.Z + d),//7 +++
+                new(- d, - d, - d),//0 ---
+                new(- d, - d, + d),//1 --+
+                new(- d, + d, - d),//2 -+-
+                new(- d, + d, + d),//3 -++
+                new(+ d, - d, - d),//4 +--
+                new(+ d, - d, + d),//5 +-+
+                new(+ d, + d, - d),//6 ++-
+                new(+ d, + d, + d),//7 +++
             };
 
-            Indexes = new (int, int, int)[]
-            {
-                (0,2,4),
-                (2,6,4),
-                (4,6,5),
-                (6,7,5),
-                (5,7,1),
-                (7,3,1),
-                (1,3,0),
-                (3,2,0),
-                (2,3,6),
-                (3,7,6),
-                (0,4,1),
-                (4,4,1)
-            };
+            GlobalVertices = ToGlobalVertices();
 
             Lines = new (int, int)[]
             {
@@ -54,7 +43,7 @@ namespace maze.Graphic.Primitives
 
             foreach ((int, int) bipol in Lines)
             {
-                Line line = new(Vertices[bipol.Item1], Vertices[bipol.Item2], Color);
+                Line line = new(GlobalVertices[bipol.Item1], GlobalVertices[bipol.Item2], Color);
 
                 projections.AddRange(line.Project(screen, light));
             }

@@ -2,6 +2,7 @@
 using maze.Graphic.Extensions;
 using maze.Engine;
 using maze.Graphic.Primitives;
+using System.Numerics;
 
 Screen screen = new(new(0, 0, 0), new(0, 0, 1), new(0, 1, 0), new(1, 0, 0), 60, 200, 100, 300);
 Frame frame = new(screen);
@@ -27,14 +28,23 @@ Frame frame = new(screen);
 // Cube cube2 = new(new(-30, 10, 100), 20, ConsoleColor.Green);
 // frame.AddPrimitive(cube2);
 
-CubeEdges cubeEdges3 = new(new(30, 10, 100), 21, ConsoleColor.White);
+CubeEdges cubeEdges3 = new(new(40, 0, 150), 21, ConsoleColor.White);
 frame.AddPrimitive(cubeEdges3);
 
-Sphere sphere = new(new(0, 10, 130), 20, ConsoleColor.DarkYellow);
-frame.AddPrimitive(sphere);
-
-Cube cube3 = new(new(30, 10, 100), 20, ConsoleColor.Blue);
+Cube cube3 = new(new(40, 0, 150), 20, ConsoleColor.Blue);
 frame.AddPrimitive(cube3);
+
+// Sphere sphere = new(new(0, 0, 150), 10, ConsoleColor.DarkYellow);
+// frame.AddPrimitive(sphere);
+
+Circle circle1 = new(new(0, 0, 150), Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX, 11, ConsoleColor.White);
+frame.AddPrimitive(circle1);
+
+// Circle circle2 = new(new(0, 0, 150), Vector3.UnitY, -Vector3.UnitZ, Vector3.UnitX, 11, ConsoleColor.White);
+// frame.AddPrimitive(circle2);
+
+// Circle circle3 = new(new(0, 0, 150), Vector3.UnitX, Vector3.UnitY, -Vector3.UnitZ, 11, ConsoleColor.White);
+// frame.AddPrimitive(circle3);
 
 // Polygon floor1 = new(new(-100, 0, 50), new(-100, 0, 250), new(100, 0, 250), ConsoleColor.Gray);
 // Polygon floor2 = new(new(-100, 0, 50), new(100, 0, 250), new(100, 0, 50), ConsoleColor.Gray);

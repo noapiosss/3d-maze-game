@@ -11,15 +11,14 @@ namespace maze.Graphic.Primitives
 
         public Polygon(Vector3 a, Vector3 b, Vector3 c, ConsoleColor color)
         {
-            Vertices = new Vector3[] { a, b, c };
-            Indexes = new (int, int, int)[] { (0, 1, 2) };
+            GlobalVertices = new Vector3[] { a, b, c };
             Color = color;
-            Normal = Vector3.Normalize(Vector3.Cross(Vertices[1] - Vertices[0], Vertices[2] - Vertices[0]));
+            Normal = Vector3.Normalize(Vector3.Cross(GlobalVertices[1] - GlobalVertices[0], GlobalVertices[2] - GlobalVertices[0]));
         }
 
         public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
-            return ProjectPolygon(Vertices[0], Vertices[1], Vertices[2], screen, light);
+            return ProjectPolygon(GlobalVertices[0], GlobalVertices[1], GlobalVertices[2], screen, light);
         }
 
         private ICollection<ProjectedVertice> ProjectPolygon(Vector3 a, Vector3 b, Vector3 c, Screen screen, Vector3 light)
@@ -86,9 +85,9 @@ namespace maze.Graphic.Primitives
                 Vector3 origin = Vector3Extensions.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
-                    Vertices[0].RotationInOZ(screen),
-                    Vertices[1].RotationInOZ(screen),
-                    Vertices[2].RotationInOZ(screen)
+                    GlobalVertices[0].RotationInOZ(screen),
+                    GlobalVertices[1].RotationInOZ(screen),
+                    GlobalVertices[2].RotationInOZ(screen)
                 );
 
                 if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))

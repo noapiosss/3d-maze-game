@@ -10,7 +10,7 @@ namespace maze.Graphic.Primitives
     {
         public Vertice(Vector3 position, ConsoleColor color)
         {
-            Vertices = new Vector3[] { position };
+            GlobalVertices = new Vector3[] { position };
             Color = color;
             Normal = Vector3.Zero;
         }
@@ -19,7 +19,7 @@ namespace maze.Graphic.Primitives
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 origin = Vertices[0].RotationInOZ(screen);
+            Vector3 origin = GlobalVertices[0].RotationInOZ(screen);
 
             float x = origin.X * screen.FocalDistance / origin.Z;
             float y = origin.Y * screen.FocalDistance / origin.Z;

@@ -9,9 +9,11 @@ namespace maze.Graphic.Primitives
     public class Sphere : Primitive
     {
         public float Radius { get; protected set; }
-        public Sphere(Vector3 center, float radius, ConsoleColor color)
+        public Sphere(Vector3 pivot, float radius, ConsoleColor color)
         {
-            Vertices = new Vector3[] { center };
+            Pivot = new(pivot, Vector3.UnitZ, Vector3.UnitZ, Vector3.UnitX);
+            LocalVertices = new Vector3[] { Vector3.Zero };
+            GlobalVertices = ToGlobalVertices();
             Radius = radius;
             Color = color;
             Normal = Vector3.Zero;
@@ -21,7 +23,7 @@ namespace maze.Graphic.Primitives
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 rotatedCenter = Vertices[0].RotationInOZ(screen);
+            Vector3 rotatedCenter = GlobalVertices[0].RotationInOZ(screen);
             Vector3 projectedCenter = rotatedCenter * screen.FocalDistance / rotatedCenter.Z;
             float projectedRadius = Radius * screen.FocalDistance / rotatedCenter.Z;
 

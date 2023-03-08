@@ -10,12 +10,46 @@ namespace maze.Graphic.Primitives
     public abstract class Primitive : IProjectible
     {
         public Vector3 Normal { get; protected set; }
-        public Vector3[] Vertices { get; protected set; }
-        public (int, int, int)[] Indexes { get; protected set; }
+        public Pivot Pivot { get; protected set; }
+        public Vector3[] LocalVertices { get; protected set; }
+        public Vector3[] GlobalVertices { get; protected set; }
+        public (int, int, int)[] Polygons { get; protected set; }
         public (int, int)[] Lines { get; protected set; }
         public ConsoleColor Color { get; protected set; }
 
+        public void Move(Vector3 v)
+        {
+            Pivot.Move(v);
+
+            for (int i = 0; i < LocalVertices.Length; i++)
+            {
+                GlobalVertices[i] += v;
+            }
+        }
+
+        public void Rotate(Vector3 axis, float angle)
+        {
+            Pivot.Rotate(axis, angle);
+
+            for (int i = 0; i < LocalVertices.Length; i++)
+            {
+                GlobalVertices[i] = Pivot.ToGlobalCoords(LocalVertices[i]);
+            }
+        }
+
         public abstract ICollection<ProjectedVertice> Project(Screen screen, Vector3 light);
+
+        protected Vector3[] ToGlobalVertices()
+        {
+            List<Vector3> globalVertices = new();
+
+            foreach (Vector3 localVertices in LocalVertices)
+            {
+                globalVertices.Add(Pivot.ToGlobalCoords(localVertices));
+            }
+
+            return globalVertices.ToArray();
+        }
 
         protected bool ProjectedVerticeIsInsideScreen(int x, int y, Vector3 origin, Vector3 originNormal, Screen screen, Vector3 light, out ProjectedVertice projection)
         {

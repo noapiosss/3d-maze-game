@@ -7,22 +7,27 @@ namespace maze.Graphic.Primitives
 {
     public class Cube : Primitive
     {
-        public Cube(Vector3 center, float sideLength, ConsoleColor color)
+        public Cube(Vector3 pivot, float sideLength, ConsoleColor color)
         {
             float d = sideLength / 2;
-            Vertices = new Vector3[]
+
+            Pivot = new(pivot, Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX);
+
+            LocalVertices = new Vector3[]
             {
-                new(center.X - d, center.Y - d, center.Z - d),//0 ---
-                new(center.X - d, center.Y - d, center.Z + d),//1 --+
-                new(center.X - d, center.Y + d, center.Z - d),//2 -+-
-                new(center.X - d, center.Y + d, center.Z + d),//3 -++
-                new(center.X + d, center.Y - d, center.Z - d),//4 +--
-                new(center.X + d, center.Y - d, center.Z + d),//5 +-+
-                new(center.X + d, center.Y + d, center.Z - d),//6 ++-
-                new(center.X + d, center.Y + d, center.Z + d),//7 +++
+                new(- d, - d, - d),//0 ---
+                new(- d, - d, + d),//1 --+
+                new(- d, + d, - d),//2 -+-
+                new(- d, + d, + d),//3 -++
+                new(+ d, - d, - d),//4 +--
+                new(+ d, - d, + d),//5 +-+
+                new(+ d, + d, - d),//6 ++-
+                new(+ d, + d, + d),//7 +++
             };
 
-            Indexes = new (int, int, int)[]
+            GlobalVertices = ToGlobalVertices();
+
+            Polygons = new (int, int, int)[]
             {
                 (2,3,7),
                 (2,7,6),
@@ -38,13 +43,6 @@ namespace maze.Graphic.Primitives
                 (1,2,0)
             };
 
-            Lines = new (int, int)[]
-            {
-                (2,3), (3,7), (7,6), (6,2),
-                (2,0), (3,1), (7,5), (6,4),
-                (0,1), (1,5), (5,4), (4,0)
-            };
-
             Color = color;
         }
 
@@ -52,9 +50,9 @@ namespace maze.Graphic.Primitives
         {
             List<ProjectedVertice> projections = new();
 
-            foreach ((int, int, int) index in Indexes)
+            foreach ((int, int, int) indexes in Polygons)
             {
-                Polygon polygon = new(Vertices[index.Item1], Vertices[index.Item2], Vertices[index.Item3], Color);
+                Polygon polygon = new(GlobalVertices[indexes.Item1], GlobalVertices[indexes.Item2], GlobalVertices[indexes.Item3], Color);
 
                 projections.AddRange(polygon.Project(screen, light));
             }
