@@ -51,12 +51,12 @@ namespace maze.Graphic.Primitives
             return globalVertices.ToArray();
         }
 
-        protected bool ProjectedVerticeIsInsideScreen(int x, int y, Vector3 origin, Vector3 originNormal, Screen screen, Vector3 light, out ProjectedVertice projection)
+        protected bool ProjectedVerticeIsInsideScreen(float x, float y, Vector3 origin, Vector3 originNormal, Screen screen, Vector3 light, out ProjectedVertice projection)
         {
             projection = new()
             {
-                X = x + (screen.Width / 2),
-                Y = y + (screen.Height / 2),
+                X = (int)x + (screen.Width / 2),
+                Y = (int)y + (screen.Height / 2),
                 Origin = origin,
                 Brightness = GetBrightness(origin, originNormal, light.RotationInOZ(screen)),
                 Color = Color
