@@ -28,7 +28,7 @@ Frame frame = new(screen);
 // Cube cube2 = new(new(-30, 10, 100), 20, ConsoleColor.Green);
 // frame.AddPrimitive(cube2);
 
-CubeEdges cubeEdges3 = new(new(40, 0, 150), 21, ConsoleColor.White);
+CubeEdges cubeEdges3 = new(new(40, 0, 150), 22, ConsoleColor.White);
 frame.AddPrimitive(cubeEdges3);
 
 Cube cube3 = new(new(40, 0, 150), 20, ConsoleColor.Blue);
@@ -46,8 +46,8 @@ frame.AddPrimitive(circle1);
 // Circle circle3 = new(new(0, 0, 150), Vector3.UnitX, Vector3.UnitY, -Vector3.UnitZ, 11, ConsoleColor.White);
 // frame.AddPrimitive(circle3);
 
-// Polygon floor1 = new(new(-100, 0, 50), new(-100, 0, 250), new(100, 0, 250), ConsoleColor.Gray);
-// Polygon floor2 = new(new(-100, 0, 50), new(100, 0, 250), new(100, 0, 50), ConsoleColor.Gray);
+// Polygon floor1 = new(new(-100, -11, 50), new(-100, -11, 250), new(100, -11, 250), ConsoleColor.DarkYellow);
+// Polygon floor2 = new(new(-100, -11, 50), new(100, -11, 250), new(100, -11, 50), ConsoleColor.DarkYellow);
 // frame.AddPrimitive(floor1);
 // frame.AddPrimitive(floor2);
 

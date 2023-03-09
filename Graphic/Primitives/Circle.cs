@@ -40,57 +40,79 @@ namespace maze.Graphic.Primitives
                 Pivot.Right.NormalRotationInOZ(screen)
             );
 
-            Pivot projectedPivot = new(
-                rotatedPivot.Center * screen.FocalDistance / rotatedPivot.Center.Z,
-                rotatedPivot.Forward,
-                rotatedPivot.Up,
-                rotatedPivot.Right
-            );
-
+            Vector3 projectedCenter = rotatedPivot.Center * screen.FocalDistance / rotatedPivot.Center.Z;
             float projectedRadius = Radius * screen.FocalDistance / rotatedPivot.Center.Z;
 
-            for (float x = projectedPivot.Center.X - projectedRadius; x <= projectedPivot.Center.X + projectedRadius; ++x)
+            for (float x = projectedCenter.X - projectedRadius; x <= projectedCenter.X + projectedRadius; ++x)
             {
-                float xLocal = rotatedPivot.ToLocalCoords(new(x, 0, screen.FocalDistance)).X;
-                float yLocal = (float)Math.Sqrt(Math.Pow(Radius, 2) - Math.Pow(xLocal, 2));
+                float y = 0;
+                Vector3 porjection = new(x, y, screen.FocalDistance);
+                Vector3 pointGlobalOnCircle = Vector3Extensions.LinePlaneIntersection(
+                    Vector3.Zero,
+                    porjection,
+                    rotatedPivot.Forward,
+                    rotatedPivot.Center
+                );
 
-                Vector3 point1 = rotatedPivot.ToGlobalCoords(new(xLocal, yLocal, 0));
-                Vector3 point2 = rotatedPivot.ToGlobalCoords(new(xLocal, -yLocal, 0));
+                Vector3 pointLocalOnCircle = rotatedPivot.ToLocalCoords(pointGlobalOnCircle);
+                float xLocal = pointLocalOnCircle.X;
+                float y1Local = (float)Math.Sqrt((Radius * Radius) - (xLocal * xLocal));
+                float y2Local = -y1Local;
 
-                float y1 = point1.Y * screen.FocalDistance / point1.Z;
-                float y2 = point2.Y * screen.FocalDistance / point2.Z;
+                Vector3 point1Global = rotatedPivot.ToGlobalCoords(new(xLocal, y1Local, 0));
+                Vector3 point2Global = rotatedPivot.ToGlobalCoords(new(xLocal, y2Local, 0));
 
-                if (ProjectedVerticeIsInsideScreen(x, y1, point1, Normal, screen, light, out ProjectedVertice projection))
+                y = point1Global.Y * screen.FocalDistance / point1Global.Z;
+
+                if (ProjectedVerticeIsInsideScreen(x, y, point1Global, Normal, screen, light, out ProjectedVertice projection1))
                 {
-                    projections.Add(projection);
+                    projections.Add(projection1);
                 }
 
-                if (ProjectedVerticeIsInsideScreen(x, y2, point2, Normal, screen, light, out projection))
+
+                y = point2Global.Y * screen.FocalDistance / point2Global.Z;
+
+                if (ProjectedVerticeIsInsideScreen(x, y, point2Global, Normal, screen, light, out projection1))
                 {
-                    projections.Add(projection);
+                    projections.Add(projection1);
                 }
+
             }
 
-            for (float y = projectedPivot.Center.Y - projectedRadius; y <= projectedPivot.Center.Y + projectedRadius; ++y)
+            for (float y = projectedCenter.Y - projectedRadius; y <= projectedCenter.Y + projectedRadius; ++y)
             {
-                float yLocal = rotatedPivot.ToLocalCoords(new(0, y, screen.FocalDistance)).Y;
-                float xLocal = (float)Math.Sqrt(Math.Pow(Radius, 2) - Math.Pow(yLocal, 2));
+                float x = 0;
+                Vector3 porjection = new(x, y, screen.FocalDistance);
+                Vector3 pointGlobalOnCircle = Vector3Extensions.LinePlaneIntersection(
+                    Vector3.Zero,
+                    porjection,
+                    rotatedPivot.Forward,
+                    rotatedPivot.Center
+                );
 
-                Vector3 point1 = rotatedPivot.ToGlobalCoords(new(xLocal, yLocal, 0));
-                Vector3 point2 = rotatedPivot.ToGlobalCoords(new(-xLocal, yLocal, 0));
+                Vector3 pointLocalOnCircle = rotatedPivot.ToLocalCoords(pointGlobalOnCircle);
+                float yLocal = pointLocalOnCircle.Y;
+                float x1Local = (float)Math.Sqrt((Radius * Radius) - (yLocal * yLocal));
+                float x2Local = -x1Local;
 
-                float x1 = point1.X * screen.FocalDistance / point1.Z;
-                float x2 = point2.X * screen.FocalDistance / point2.Z;
+                Vector3 point1Global = rotatedPivot.ToGlobalCoords(new(x1Local, yLocal, 0));
+                Vector3 point2Global = rotatedPivot.ToGlobalCoords(new(x2Local, yLocal, 0));
 
-                if (ProjectedVerticeIsInsideScreen(x1, y, point1, Normal, screen, light, out ProjectedVertice projection))
+                x = point1Global.X * screen.FocalDistance / point1Global.Z;
+
+                if (ProjectedVerticeIsInsideScreen(x, y, point1Global, Vector3.One, screen, light, out ProjectedVertice projection1))
                 {
-                    projections.Add(projection);
+                    projections.Add(projection1);
                 }
 
-                if (ProjectedVerticeIsInsideScreen(x2, y, point2, Normal, screen, light, out projection))
+
+                x = point2Global.X * screen.FocalDistance / point2Global.Z;
+
+                if (ProjectedVerticeIsInsideScreen(x, y, point2Global, Vector3.One, screen, light, out projection1))
                 {
-                    projections.Add(projection);
+                    projections.Add(projection1);
                 }
+
             }
 
             return projections;
