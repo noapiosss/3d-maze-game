@@ -34,17 +34,17 @@ frame.AddPrimitive(cubeEdges3);
 Cube cube3 = new(new(40, 0, 150), 20, ConsoleColor.Blue);
 frame.AddPrimitive(cube3);
 
-// Sphere sphere = new(new(0, 0, 150), 10, ConsoleColor.DarkYellow);
-// frame.AddPrimitive(sphere);
+Sphere sphere = new(new(0, 0, 150), 10, ConsoleColor.DarkYellow);
+frame.AddPrimitive(sphere);
 
 Circle circle1 = new(new(0, 0, 150), Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX, 11, ConsoleColor.White);
 frame.AddPrimitive(circle1);
 
-// Circle circle2 = new(new(0, 0, 150), Vector3.UnitY, -Vector3.UnitZ, Vector3.UnitX, 11, ConsoleColor.White);
-// frame.AddPrimitive(circle2);
+Circle circle2 = new(new(0, 0, 150), Vector3.UnitY, -Vector3.UnitZ, Vector3.UnitX, 11, ConsoleColor.White);
+frame.AddPrimitive(circle2);
 
-// Circle circle3 = new(new(0, 0, 150), Vector3.UnitX, Vector3.UnitY, -Vector3.UnitZ, 11, ConsoleColor.White);
-// frame.AddPrimitive(circle3);
+Circle circle3 = new(new(0, 0, 150), Vector3.UnitX, Vector3.UnitY, -Vector3.UnitZ, 11, ConsoleColor.White);
+frame.AddPrimitive(circle3);
 
 // Polygon floor1 = new(new(-100, 0, 50), new(-100, 0, 250), new(100, 0, 250), ConsoleColor.Gray);
 // Polygon floor2 = new(new(-100, 0, 50), new(100, 0, 250), new(100, 0, 50), ConsoleColor.Gray);

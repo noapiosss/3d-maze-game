@@ -9,6 +9,16 @@ namespace maze.Graphic.Primitives
     public class Circle : Primitive
     {
         public float Radius { get; protected set; }
+
+        public Circle(Vector3 pivot, float radius, ConsoleColor color)
+        {
+            Pivot = new(pivot, Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX);
+            LocalVertices = new Vector3[] { Vector3.Zero };
+            GlobalVertices = ToGlobalVertices();
+            Radius = radius;
+            Color = color;
+            Normal = Vector3.Zero;
+        }
         public Circle(Vector3 pivot, Vector3 pivotForward, Vector3 pivotUp, Vector3 pivotRight, float radius, ConsoleColor color)
         {
             Pivot = new(pivot, pivotForward, pivotUp, pivotRight);
@@ -22,90 +32,36 @@ namespace maze.Graphic.Primitives
         public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
-            _ = Pivot.Forward.RotationInOZ(screen);
-            Vector3 rotatedPivotUp = Pivot.Up.RotationInOZ(screen);
-            Vector3 rotatedPivotRight = Pivot.Right.RotationInOZ(screen);
+
             Vector3 rotatedCenter = GlobalVertices[0].RotationInOZ(screen);
-            Vector3 projectedCenter = rotatedCenter * screen.FocalDistance / rotatedCenter.Z;
+            // Vector3 projectedCenter = rotatedCenter * screen.FocalDistance / rotatedCenter.Z;
 
-            float projectedRadius = Radius * screen.FocalDistance / rotatedCenter.Z;
+            Vector3 rotatedPivotUp = Pivot.Up.NormalRotationInOZ(screen);
+            Vector3 rotatedPivotRight = Pivot.Right.NormalRotationInOZ(screen);
 
-            float xMin = (float)(-projectedRadius * Math.Cos(rotatedPivotRight.Angle(Vector3.UnitX)));
-            float xMax = (float)(projectedRadius * Math.Cos(rotatedPivotRight.Angle(Vector3.UnitX)));
+            // float projectedRadius = Radius * screen.FocalDistance / rotatedCenter.Z;
 
-            for (float x = xMin; x <= xMax; ++x)
+            for (double t = 0; t <= 2 * Math.PI; t += 0.1)
             {
-                float y1 = (float)Math.Sqrt(Math.Pow(projectedRadius, 2) - Math.Pow(x, 2));
-                float y2 = (float)-Math.Sqrt(Math.Pow(projectedRadius, 2) - Math.Pow(x, 2));
+                Vector3 point = (Radius * (((float)Math.Cos(t) * rotatedPivotUp) + ((float)Math.Sin(t) * rotatedPivotRight))) + rotatedCenter;
+                float x = point.X * screen.FocalDistance / point.Z;
+                float y = point.Y * screen.FocalDistance / point.Z;
 
-                if (IsPorjectibleCirclePoint(
-                    x + projectedCenter.X,
-                    y1 + projectedCenter.Y,
-                    rotatedCenter,
-                    screen,
-                    light,
-                    out ProjectedVertice projection))
-                {
-                    projections.Add(projection);
-                }
+                // Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                //     Vector3.Zero,
+                //     new(x, y, screen.FocalDistance),
+                //     rotatedCenter,
+                //     rotatedCenter + (rotatedPivotUp * Radius),
+                //     rotatedCenter + (rotatedPivotRight * Radius)
+                // );
 
-                if (IsPorjectibleCirclePoint(
-                    x + projectedCenter.X,
-                    y2 + projectedCenter.Y,
-                    rotatedCenter,
-                    screen,
-                    light,
-                    out projection))
-                {
-                    projections.Add(projection);
-                }
-            }
-
-            float yMin = (float)(-projectedRadius * Math.Cos(rotatedPivotUp.Angle(Vector3.UnitY)));
-            float yMax = (float)(projectedRadius * Math.Cos(rotatedPivotUp.Angle(Vector3.UnitY)));
-
-            for (float y = yMin; y <= yMax; ++y)
-            {
-                float x1 = (float)Math.Sqrt(Math.Pow(projectedRadius, 2) - Math.Pow(y, 2));
-                float x2 = (float)-Math.Sqrt(Math.Pow(projectedRadius, 2) - Math.Pow(y, 2));
-
-                if (IsPorjectibleCirclePoint(
-                    x1 + projectedCenter.X,
-                    y + projectedCenter.Y,
-                    rotatedCenter,
-                    screen,
-                    light,
-                    out ProjectedVertice projection))
-                {
-                    projections.Add(projection);
-                }
-
-                if (IsPorjectibleCirclePoint(
-                    x2 + projectedCenter.X,
-                    y + projectedCenter.Y,
-                    rotatedCenter,
-                    screen,
-                    light,
-                    out projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, point, Normal, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 }
             }
 
             return projections;
-        }
-
-        private bool IsPorjectibleCirclePoint(float x, float y, Vector3 rotatedCenter, Screen screen, Vector3 light, out ProjectedVertice projection)
-        {
-            Vector3 origin = Vector3Extensions.LinePlaneIntersection(
-                Vector3.Zero,
-                new(x, y, screen.FocalDistance),
-                rotatedCenter,
-                rotatedCenter + (Pivot.Up.RotationInOZ(screen) * Radius),
-                rotatedCenter + (Pivot.Right.RotationInOZ(screen) * Radius)
-            );
-
-            return ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out projection);
         }
     }
 }
