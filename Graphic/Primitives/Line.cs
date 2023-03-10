@@ -24,8 +24,8 @@ namespace maze.Graphic.Primitives
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 a = v1.RotationInOZ(screen);
-            Vector3 b = v2.RotationInOZ(screen);
+            Vector3 a = screen.View(v1);
+            Vector3 b = screen.View(v2);
 
             float x1 = a.X * screen.FocalDistance / a.Z;
             float y1 = a.Y * screen.FocalDistance / a.Z;
@@ -50,7 +50,7 @@ namespace maze.Graphic.Primitives
                     a
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };
@@ -67,7 +67,7 @@ namespace maze.Graphic.Primitives
                     a
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };

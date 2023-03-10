@@ -23,7 +23,7 @@ namespace maze.Graphic.Primitives
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 rotatedCenter = GlobalVertices[0].RotationInOZ(screen);
+            Vector3 rotatedCenter = screen.View(GlobalVertices[0]);
             Vector3 projectedCenter = rotatedCenter * screen.FocalDistance / rotatedCenter.Z;
             float projectedRadius = Radius * screen.FocalDistance / rotatedCenter.Z;
 

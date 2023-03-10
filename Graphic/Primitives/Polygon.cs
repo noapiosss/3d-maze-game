@@ -23,9 +23,9 @@ namespace maze.Graphic.Primitives
 
         private ICollection<ProjectedVertice> ProjectPolygon(Vector3 a, Vector3 b, Vector3 c, Screen screen, Vector3 light)
         {
-            Vector3 aRotated = a.RotationInOZ(screen);
-            Vector3 bRotated = b.RotationInOZ(screen);
-            Vector3 cRotated = c.RotationInOZ(screen);
+            Vector3 aRotated = screen.View(a);
+            Vector3 bRotated = screen.View(b);
+            Vector3 cRotated = screen.View(c);
 
             List<ProjectedVertice> projections = new();
 
@@ -85,12 +85,12 @@ namespace maze.Graphic.Primitives
                 Vector3 origin = Vector3Extensions.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
-                    GlobalVertices[0].RotationInOZ(screen),
-                    GlobalVertices[1].RotationInOZ(screen),
-                    GlobalVertices[2].RotationInOZ(screen)
+                    screen.View(GlobalVertices[0]),
+                    screen.View(GlobalVertices[1]),
+                    screen.View(GlobalVertices[2])
                 );
 
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal.NormalRotationInOZ(screen), screen, light, out ProjectedVertice projection))
+                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
                 {
                     projections.Add(projection);
                 };

@@ -2,7 +2,6 @@
 using maze.Graphic.Extensions;
 using maze.Engine;
 using maze.Graphic.Primitives;
-using System.Numerics;
 
 Screen screen = new(new(0, 0, 0), new(0, 0, 1), new(0, 1, 0), new(1, 0, 0), 60, 200, 100, 300);
 Frame frame = new(screen);
@@ -10,34 +9,35 @@ Frame frame = new(screen);
 // Vertice vertice = new(new(0, 0, 150), ConsoleColor.DarkGreen);
 // frame.AddPrimitive(vertice);
 
-// Line line1 = new(new(-20, 0, 150), new(20, 0, 150), ConsoleColor.Green);
-// frame.AddPrimitive(line1);
+Line lineX = new(new(-40, 0, 110), new(60, 0, 110), ConsoleColor.Green);
+frame.AddPrimitive(lineX);
+Line lineY = new(new(-40, 0, 110), new(-40, 100, 110), ConsoleColor.Red);
+frame.AddPrimitive(lineY);
+Line lineZ = new(new(-40, 0, 110), new(-40, 0, 210), ConsoleColor.Blue);
+frame.AddPrimitive(lineZ);
 
-// Line line2 = new(new(0, -20, 150), new(0, 20, 150), ConsoleColor.Green);
-// frame.AddPrimitive(line2);
-
-// CubeEdges cubeEdges1 = new(new(0, 10, 100), 21, ConsoleColor.White);
+// CubeEdges cubeEdges1 = new(new(0, 0, 150), 21, ConsoleColor.White);
 // frame.AddPrimitive(cubeEdges1);
 
-// Cube cube1 = new(new(0, 10, 100), 20, ConsoleColor.Red);
+// Cube cube1 = new(new(0, 0, 150), 20, ConsoleColor.Red);
 // frame.AddPrimitive(cube1);
 
-// CubeEdges cubeEdges2 = new(new(-30, 10, 100), 21, ConsoleColor.White);
+// CubeEdges cubeEdges2 = new(new(-30, 0, 150), 21, ConsoleColor.White);
 // frame.AddPrimitive(cubeEdges2);
 
-// Cube cube2 = new(new(-30, 10, 100), 20, ConsoleColor.Green);
+// Cube cube2 = new(new(-30, 0, 150), 20, ConsoleColor.Green);
 // frame.AddPrimitive(cube2);
 
-CubeEdges cubeEdges3 = new(new(40, 0, 150), 22, ConsoleColor.White);
+CubeEdges cubeEdges3 = new(new(30, 0, 150), 22, ConsoleColor.White);
 frame.AddPrimitive(cubeEdges3);
 
-Cube cube3 = new(new(40, 0, 150), 20, ConsoleColor.Blue);
+Cube cube3 = new(new(30, 0, 150), 20, ConsoleColor.Blue);
 frame.AddPrimitive(cube3);
 
 // Sphere sphere = new(new(0, 0, 150), 10, ConsoleColor.DarkYellow);
 // frame.AddPrimitive(sphere);
 
-Circle circle1 = new(new(0, 0, 150), Vector3.UnitZ, Vector3.UnitY, Vector3.UnitX, 11, ConsoleColor.White);
+Circle circle1 = new(new(0, 0, 150), 11, ConsoleColor.White);
 frame.AddPrimitive(circle1);
 
 // Circle circle2 = new(new(0, 0, 150), Vector3.UnitY, -Vector3.UnitZ, Vector3.UnitX, 11, ConsoleColor.White);

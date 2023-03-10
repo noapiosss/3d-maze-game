@@ -58,7 +58,7 @@ namespace maze.Graphic.Primitives
                 X = (int)x + (screen.Width / 2),
                 Y = (int)y + (screen.Height / 2),
                 Origin = origin,
-                Brightness = GetBrightness(origin, originNormal, light.RotationInOZ(screen)),
+                Brightness = GetBrightness(origin, screen.LookAt(originNormal), screen.View(light)),
                 Color = Color
             };
 
@@ -70,14 +70,14 @@ namespace maze.Graphic.Primitives
                 Vector3.Distance(projection.Origin, Vector3.Zero) < screen.RenderDistance;
         }
 
-        public static float GetBrightness(Vector3 pointPosition, Vector3 pointNormal, Vector3 light)
+        public static float GetBrightness(Vector3 origin, Vector3 originNormal, Vector3 light)
         {
-            if (pointNormal == Vector3.Zero)
+            if (originNormal == Vector3.Zero)
             {
                 return 1;
             }
 
-            float angle = (pointPosition - light).Angle(pointNormal);
+            float angle = (origin - light).Angle(originNormal);
             return (float)(angle / Math.PI);
         }
     }

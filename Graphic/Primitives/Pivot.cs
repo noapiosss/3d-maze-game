@@ -23,15 +23,15 @@ namespace maze.Graphic.Primitives
             Right.X, Up.X, Forward.X, 0,
             Right.Y, Up.Y, Forward.Y, 0,
             Right.Z, Up.Z, Forward.Z, 0,
-            0, 0, 0, 0
+            0, 0, 0, 1
         );
 
         public Matrix4x4 GlobalCoordsMatrix => new
         (
-            Right.X, Right.Y, Right.Z, 0,
-            Up.X, Up.Y, Up.Z, 0,
-            Forward.X, Forward.Y, Forward.Z, 0,
-            0, 0, 0, 0
+            Right.X, Up.X, Forward.X, Center.X,
+            Right.Y, Up.Y, Forward.Y, Center.Y,
+            Right.Z, Up.Z, Forward.Z, Center.Z,
+            0, 0, 0, 1
         );
 
         public Vector3 ToLocalCoords(Vector3 global)

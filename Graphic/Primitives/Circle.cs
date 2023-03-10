@@ -34,86 +34,95 @@ namespace maze.Graphic.Primitives
             List<ProjectedVertice> projections = new();
 
             Pivot rotatedPivot = new(
-                GlobalVertices[0].RotationInOZ(screen),
-                Pivot.Forward.NormalRotationInOZ(screen),
-                Pivot.Up.NormalRotationInOZ(screen),
-                Pivot.Right.NormalRotationInOZ(screen)
+                screen.View(GlobalVertices[0]),
+                screen.LookAt(Pivot.Forward),
+                screen.LookAt(Pivot.Up),
+                screen.LookAt(Pivot.Right)
             );
 
-            Vector3 projectedCenter = rotatedPivot.Center * screen.FocalDistance / rotatedPivot.Center.Z;
-            float projectedRadius = Radius * screen.FocalDistance / rotatedPivot.Center.Z;
+            Vector3 W1 = Pivot.ToGlobalCoords(new(-Radius, -Radius, 0));
+            Vector3 X1 = Pivot.ToGlobalCoords(new(-Radius, Radius, 0));
+            Vector3 Y1 = Pivot.ToGlobalCoords(new(Radius, Radius, 0));
+            Vector3 Z1 = Pivot.ToGlobalCoords(new(Radius, -Radius, 0));
 
-            for (float x = projectedCenter.X - projectedRadius; x <= projectedCenter.X + projectedRadius; ++x)
+            Vector3 W = screen.View(W1);
+            Vector3 X = screen.View(X1);
+            Vector3 Y = screen.View(Y1);
+            Vector3 Z = screen.View(Z1);
+
+            Ellipse ellipse = Vector3Extensions.GetEllipse(
+                W * screen.FocalDistance / W.Z,
+                X * screen.FocalDistance / X.Z,
+                Y * screen.FocalDistance / Y.Z,
+                Z * screen.FocalDistance / Z.Z
+            );
+
+            for (float x = -ellipse.RadiusA; x <= ellipse.RadiusA; ++x)
             {
-                float y = 0;
-                Vector3 porjection = new(x, y, screen.FocalDistance);
-                Vector3 pointGlobalOnCircle = Vector3Extensions.LinePlaneIntersection(
+                float y1 = (float)(ellipse.RadiusB * Math.Sqrt(1 - (x * x / (ellipse.RadiusA * ellipse.RadiusA))));
+                float y2 = (float)(-ellipse.RadiusB * Math.Sqrt(1 - (x * x / (ellipse.RadiusA * ellipse.RadiusA))));
+
+                Vector3 point1 = new Vector3(x, y1, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+                Vector3 point2 = new Vector3(x, y2, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+
+                Vector3 origin1 = Vector3Extensions.LinePlaneIntersection(
                     Vector3.Zero,
-                    porjection,
+                    point1,
                     rotatedPivot.Forward,
                     rotatedPivot.Center
                 );
 
-                Vector3 pointLocalOnCircle = rotatedPivot.ToLocalCoords(pointGlobalOnCircle);
-                float xLocal = pointLocalOnCircle.X;
-                float y1Local = (float)Math.Sqrt((Radius * Radius) - (xLocal * xLocal));
-                float y2Local = -y1Local;
-
-                Vector3 point1Global = rotatedPivot.ToGlobalCoords(new(xLocal, y1Local, 0));
-                Vector3 point2Global = rotatedPivot.ToGlobalCoords(new(xLocal, y2Local, 0));
-
-                y = point1Global.Y * screen.FocalDistance / point1Global.Z;
-
-                if (ProjectedVerticeIsInsideScreen(x, y, point1Global, Normal, screen, light, out ProjectedVertice projection1))
-                {
-                    projections.Add(projection1);
-                }
-
-
-                y = point2Global.Y * screen.FocalDistance / point2Global.Z;
-
-                if (ProjectedVerticeIsInsideScreen(x, y, point2Global, Normal, screen, light, out projection1))
-                {
-                    projections.Add(projection1);
-                }
-
-            }
-
-            for (float y = projectedCenter.Y - projectedRadius; y <= projectedCenter.Y + projectedRadius; ++y)
-            {
-                float x = 0;
-                Vector3 porjection = new(x, y, screen.FocalDistance);
-                Vector3 pointGlobalOnCircle = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin2 = Vector3Extensions.LinePlaneIntersection(
                     Vector3.Zero,
-                    porjection,
+                    point2,
                     rotatedPivot.Forward,
                     rotatedPivot.Center
                 );
 
-                Vector3 pointLocalOnCircle = rotatedPivot.ToLocalCoords(pointGlobalOnCircle);
-                float yLocal = pointLocalOnCircle.Y;
-                float x1Local = (float)Math.Sqrt((Radius * Radius) - (yLocal * yLocal));
-                float x2Local = -x1Local;
-
-                Vector3 point1Global = rotatedPivot.ToGlobalCoords(new(x1Local, yLocal, 0));
-                Vector3 point2Global = rotatedPivot.ToGlobalCoords(new(x2Local, yLocal, 0));
-
-                x = point1Global.X * screen.FocalDistance / point1Global.Z;
-
-                if (ProjectedVerticeIsInsideScreen(x, y, point1Global, Vector3.One, screen, light, out ProjectedVertice projection1))
+                if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, screen, light, out ProjectedVertice projection))
                 {
-                    projections.Add(projection1);
+                    projections.Add(projection);
                 }
 
-
-                x = point2Global.X * screen.FocalDistance / point2Global.Z;
-
-                if (ProjectedVerticeIsInsideScreen(x, y, point2Global, Vector3.One, screen, light, out projection1))
+                if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, screen, light, out projection))
                 {
-                    projections.Add(projection1);
+                    projections.Add(projection);
                 }
-
             }
+
+            for (float y = -ellipse.RadiusB; y <= ellipse.RadiusB; ++y)
+            {
+                float x1 = (float)(ellipse.RadiusA * Math.Sqrt(1 - (y * y / (ellipse.RadiusB * ellipse.RadiusB))));
+                float x2 = (float)(-ellipse.RadiusA * Math.Sqrt(1 - (y * y / (ellipse.RadiusB * ellipse.RadiusB))));
+
+                Vector3 point1 = new Vector3(x1, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+                Vector3 point2 = new Vector3(x2, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+
+                Vector3 origin1 = Vector3Extensions.LinePlaneIntersection(
+                    Vector3.Zero,
+                    point1,
+                    rotatedPivot.Forward,
+                    rotatedPivot.Center
+                );
+
+                Vector3 origin2 = Vector3Extensions.LinePlaneIntersection(
+                    Vector3.Zero,
+                    point2,
+                    rotatedPivot.Forward,
+                    rotatedPivot.Center
+                );
+
+                if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, screen, light, out ProjectedVertice projection))
+                {
+                    projections.Add(projection);
+                }
+
+                if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, screen, light, out projection))
+                {
+                    projections.Add(projection);
+                }
+            }
+
 
             return projections;
         }
