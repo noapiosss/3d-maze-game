@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base;
+using maze.Graphic.Primitives.Helpres;
 
 namespace maze.Graphic.Primitives
 {
@@ -43,10 +45,10 @@ namespace maze.Graphic.Primitives
             {
                 float y = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
-                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
-                    Vector3Extensions.GetAnyLineNormal(a, b),
+                    Intersections.GetAnyLineNormal(a, b),
                     a
                 );
 
@@ -60,10 +62,10 @@ namespace maze.Graphic.Primitives
             {
                 float x = ((y - y1) * (x2 - x1) / (y2 - y1)) + x1;
 
-                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
-                    Vector3Extensions.GetAnyLineNormal(a, b),
+                    Intersections.GetAnyLineNormal(a, b),
                     a
                 );
 

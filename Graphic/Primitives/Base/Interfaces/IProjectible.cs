@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
 
-namespace maze.Graphic.Primitives.Interfaces
+namespace maze.Graphic.Primitives.Base.Interfaces
 {
     public interface IProjectible
     {

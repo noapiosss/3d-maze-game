@@ -1,5 +1,4 @@
 ﻿using System;
-using maze.Graphic.Extensions;
 using maze.Engine;
 using maze.Graphic.Primitives;
 
@@ -53,57 +52,6 @@ frame.AddPrimitive(circle1);
 
 
 frame.AddLight(new(200, 200, 50));
-frame.Render();
 
-while (true)
-{
-    ConsoleKeyInfo key = Console.ReadKey(true);
-
-    if (key.Key == ConsoleKey.UpArrow)
-    {
-        frame._screen.LookUp(0.05000f);
-    }
-    if (key.Key == ConsoleKey.DownArrow)
-    {
-        frame._screen.LookUp(-0.05000f);
-    }
-    if (key.Key == ConsoleKey.RightArrow)
-    {
-        frame._screen.LookSide(0.05000f);
-    }
-    if (key.Key == ConsoleKey.LeftArrow)
-    {
-        frame._screen.LookSide(-0.05000f);
-    }
-    if (key.Key == ConsoleKey.W)
-    {
-        frame._screen.MoveForward(10);
-    }
-    if (key.Key == ConsoleKey.S)
-    {
-        frame._screen.MoveForward(-10);
-    }
-    if (key.Key == ConsoleKey.D)
-    {
-        frame._screen.MoveSide(10);
-    }
-    if (key.Key == ConsoleKey.A)
-    {
-        frame._screen.MoveSide(-10);
-    }
-    if (key.Key == ConsoleKey.Spacebar)
-    {
-        frame._screen.MoveUp(10);
-    }
-    if (key.Key == ConsoleKey.C)
-    {
-        frame._screen.MoveUp(-10);
-    }
-
-    frame.Render();
-    Console.SetCursorPosition(0, 0);
-    Console.WriteLine($"camera position: {frame._screen.CameraPosition}");
-    // Console.WriteLine($"camera forward: {frame._screen.CameraForward}");
-    // Console.WriteLine($"camera up: {frame._screen.CameraUp}");
-    // Console.WriteLine($"camera right: {frame._screen.CameraRight}");
-}
+Controller controller = new(frame);
+controller.Run();

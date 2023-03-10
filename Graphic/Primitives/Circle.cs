@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base;
+using maze.Graphic.Primitives.Extensions;
+using maze.Graphic.Primitives.Helpres;
 
 namespace maze.Graphic.Primitives
 {
@@ -50,7 +53,7 @@ namespace maze.Graphic.Primitives
             Vector3 Y = screen.View(Y1);
             Vector3 Z = screen.View(Z1);
 
-            Ellipse ellipse = Vector3Extensions.GetEllipse(
+            Ellipse ellipse = new(
                 W * screen.FocalDistance / W.Z,
                 X * screen.FocalDistance / X.Z,
                 Y * screen.FocalDistance / Y.Z,
@@ -65,14 +68,14 @@ namespace maze.Graphic.Primitives
                 Vector3 point1 = new Vector3(x, y1, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
                 Vector3 point2 = new Vector3(x, y2, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
 
-                Vector3 origin1 = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin1 = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     point1,
                     rotatedPivot.Forward,
                     rotatedPivot.Center
                 );
 
-                Vector3 origin2 = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin2 = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     point2,
                     rotatedPivot.Forward,
@@ -98,14 +101,14 @@ namespace maze.Graphic.Primitives
                 Vector3 point1 = new Vector3(x1, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
                 Vector3 point2 = new Vector3(x2, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
 
-                Vector3 origin1 = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin1 = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     point1,
                     rotatedPivot.Forward,
                     rotatedPivot.Center
                 );
 
-                Vector3 origin2 = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin2 = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     point2,
                     rotatedPivot.Forward,

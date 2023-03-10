@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base;
 
 namespace maze.Graphic.Primitives
 {

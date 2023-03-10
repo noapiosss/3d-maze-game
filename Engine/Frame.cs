@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using maze.Graphic.Primitives;
+using maze.Engine.Helpers.cs;
+using maze.Graphic.Primitives.Base;
 
 namespace maze.Engine
 {

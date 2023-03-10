@@ -1,6 +1,6 @@
 using System;
 
-namespace maze.Engine
+namespace maze.Engine.Helpers.cs
 {
     public class ConsoleHelper
     {

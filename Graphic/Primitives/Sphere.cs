@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base;
+using maze.Graphic.Primitives.Helpres;
 
 namespace maze.Graphic.Primitives
 {
@@ -33,7 +35,7 @@ namespace maze.Graphic.Primitives
                 {
                     if (Math.Pow(x, 2) + Math.Pow(y, 2) <= Math.Pow(projectedRadius, 2))
                     {
-                        Vector3 origin = Vector3Extensions.LineSphereIntersection(
+                        Vector3 origin = Intersections.LineSphereIntersection(
                             Vector3.Zero,
                             new(x + projectedCenter.X, y + projectedCenter.Y, screen.FocalDistance),
                             rotatedCenter,

@@ -1,8 +1,8 @@
 using System;
 using System.Numerics;
-using maze.Engine;
+using maze.Graphic.Primitives.Extensions;
 
-namespace maze.Graphic.Extensions
+namespace maze.Engine.Extensions
 {
     public static class ScreenExtensions
     {

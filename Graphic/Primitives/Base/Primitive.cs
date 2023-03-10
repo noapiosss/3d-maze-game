@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
-using maze.Graphic.Primitives.Interfaces;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base.Interfaces;
+using maze.Graphic.Primitives.Extensions;
 
-namespace maze.Graphic.Primitives
+namespace maze.Graphic.Primitives.Base
 {
     public abstract class Primitive : IProjectible
     {

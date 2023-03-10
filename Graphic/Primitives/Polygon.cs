@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine;
-using maze.Graphic.Extensions;
+using maze.Engine.Extensions;
+using maze.Graphic.Primitives.Base;
+using maze.Graphic.Primitives.Helpres;
 
 namespace maze.Graphic.Primitives
 {
@@ -82,7 +84,7 @@ namespace maze.Graphic.Primitives
 
             for (float y = yMin; y <= yMax; ++y)
             {
-                Vector3 origin = Vector3Extensions.LinePlaneIntersection(
+                Vector3 origin = Intersections.LinePlaneIntersection(
                     Vector3.Zero,
                     new(x, y, screen.FocalDistance),
                     screen.View(GlobalVertices[0]),

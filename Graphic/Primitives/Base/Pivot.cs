@@ -1,7 +1,7 @@
 using System.Numerics;
-using maze.Graphic.Extensions;
+using maze.Graphic.Primitives.Extensions;
 
-namespace maze.Graphic.Primitives
+namespace maze.Graphic.Primitives.Base
 {
     public class Pivot
     {
