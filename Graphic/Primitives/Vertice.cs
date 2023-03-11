@@ -16,16 +16,16 @@ namespace maze.Graphic.Primitives
             Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 origin = screen.View(GlobalVertices[0]);
+            Vector3 origin = camera.View(GlobalVertices[0]);
 
-            float x = origin.X * screen.FocalDistance / origin.Z;
-            float y = origin.Y * screen.FocalDistance / origin.Z;
+            float x = origin.X * camera.FocalDistance / origin.Z;
+            float y = origin.Y * camera.FocalDistance / origin.Z;
 
-            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
+            if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, camera, light, out ProjectedVertice projection))
             {
                 projections.Add(projection);
             }

@@ -7,7 +7,14 @@ namespace maze.Graphic.Primitives.Extensions
     {
         public static float Angle(this Vector3 vector1, Vector3 vector2)
         {
-            return (float)Math.Acos(Vector3.Dot(vector1, vector2) / (vector1.Length() * vector2.Length()));
+            float angle =  (float)Math.Acos(Vector3.Dot(vector1, vector2) / (vector1.Length() * vector2.Length()));
+
+            if (angle != angle)
+            {
+                return 0;
+            }
+            
+            return angle;
         }
 
         public static Vector3 RotateX(this Vector3 vector, Vector3 pivot, float angle)

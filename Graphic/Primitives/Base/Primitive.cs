@@ -38,7 +38,7 @@ namespace maze.Graphic.Primitives.Base
             }
         }
 
-        public abstract ICollection<ProjectedVertice> Project(Screen screen, Vector3 light);
+        public abstract ICollection<ProjectedVertice> Project(Camera camera, Vector3 light);
 
         protected Vector3[] ToGlobalVertices()
         {
@@ -52,23 +52,23 @@ namespace maze.Graphic.Primitives.Base
             return globalVertices.ToArray();
         }
 
-        protected bool ProjectedVerticeIsInsideScreen(float x, float y, Vector3 origin, Vector3 originNormal, Screen screen, Vector3 light, out ProjectedVertice projection)
+        protected bool ProjectedVerticeIsInsideScreen(float x, float y, Vector3 origin, Vector3 originNormal, Camera camera, Vector3 light, out ProjectedVertice projection)
         {
             projection = new()
             {
-                X = (int)x + (screen.Width / 2),
-                Y = (int)y + (screen.Height / 2),
+                X = (int)x + (camera.Width / 2),
+                Y = (int)y + (camera.Height / 2),
                 Origin = origin,
-                Brightness = GetBrightness(origin, screen.LookAt(originNormal), screen.View(light)),
+                Brightness = GetBrightness(origin, originNormal, camera.View(light)),
                 Color = Color
             };
 
             return projection.X >= 0 &&
-                projection.X < screen.Width &&
+                projection.X < camera.Width &&
                 projection.Y >= 0 &&
-                projection.Y < screen.Height &&
-                projection.Origin.Z > 0 &&
-                Vector3.Distance(projection.Origin, Vector3.Zero) < screen.RenderDistance;
+                projection.Y < camera.Height &&
+                projection.Origin.Z > camera.FocalDistance &&
+                Vector3.Distance(projection.Origin, Vector3.Zero) < camera.RenderDistance;
         }
 
         public static float GetBrightness(Vector3 origin, Vector3 originNormal, Vector3 light)

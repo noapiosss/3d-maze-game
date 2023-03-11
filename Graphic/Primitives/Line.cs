@@ -17,23 +17,23 @@ namespace maze.Graphic.Primitives
             Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
-            return ProjectLine(GlobalVertices[0], GlobalVertices[1], screen, light);
+            return ProjectLine(GlobalVertices[0], GlobalVertices[1], camera, light);
         }
 
-        private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Screen screen, Vector3 light)
+        private ICollection<ProjectedVertice> ProjectLine(Vector3 v1, Vector3 v2, Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 a = screen.View(v1);
-            Vector3 b = screen.View(v2);
+            Vector3 a = camera.View(v1);
+            Vector3 b = camera.View(v2);
 
-            float x1 = a.X * screen.FocalDistance / a.Z;
-            float y1 = a.Y * screen.FocalDistance / a.Z;
+            float x1 = a.X * camera.FocalDistance / a.Z;
+            float y1 = a.Y * camera.FocalDistance / a.Z;
 
-            float x2 = b.X * screen.FocalDistance / b.Z;
-            float y2 = b.Y * screen.FocalDistance / b.Z;
+            float x2 = b.X * camera.FocalDistance / b.Z;
+            float y2 = b.Y * camera.FocalDistance / b.Z;
 
             float xMin = Math.Min(x1, x2);
             float xMax = Math.Max(x1, x2);
@@ -45,34 +45,36 @@ namespace maze.Graphic.Primitives
             {
                 float y = ((x - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
-                Vector3 origin = Intersections.LinePlaneIntersection(
+                if (Intersections.LinePlaneIntersection(
                     Vector3.Zero,
-                    new(x, y, screen.FocalDistance),
+                    new(x, y, camera.FocalDistance),
                     Intersections.GetAnyLineNormal(a, b),
-                    a
-                );
-
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
+                    a,
+                    out Vector3 origin))
                 {
-                    projections.Add(projection);
-                };
+                    if (ProjectedVerticeIsInsideScreen(x, y, origin, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
+                }
             }
 
             for (float y = yMin; y <= yMax; ++y)
             {
                 float x = ((y - y1) * (x2 - x1) / (y2 - y1)) + x1;
 
-                Vector3 origin = Intersections.LinePlaneIntersection(
+                if (Intersections.LinePlaneIntersection(
                     Vector3.Zero,
-                    new(x, y, screen.FocalDistance),
+                    new(x, y, camera.FocalDistance),
                     Intersections.GetAnyLineNormal(a, b),
-                    a
-                );
-
-                if (ProjectedVerticeIsInsideScreen((int)x, (int)y, origin, Normal, screen, light, out ProjectedVertice projection))
+                    a,
+                    out Vector3 origin))
                 {
-                    projections.Add(projection);
-                };
+                    if (ProjectedVerticeIsInsideScreen(x, y, origin, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
+                }
             }
 
             return projections;

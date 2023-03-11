@@ -6,6 +6,6 @@ namespace maze.Graphic.Primitives.Base.Interfaces
 {
     public interface IProjectible
     {
-        public ICollection<ProjectedVertice> Project(Screen screen, Vector3 light);
+        public ICollection<ProjectedVertice> Project(Camera camera, Vector3 light);
     }
 }

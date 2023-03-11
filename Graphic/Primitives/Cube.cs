@@ -47,7 +47,7 @@ namespace maze.Graphic.Primitives
             Color = color;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
@@ -55,7 +55,7 @@ namespace maze.Graphic.Primitives
             {
                 Polygon polygon = new(GlobalVertices[indexes.Item1], GlobalVertices[indexes.Item2], GlobalVertices[indexes.Item3], Color);
 
-                projections.AddRange(polygon.Project(screen, light));
+                projections.AddRange(polygon.Project(camera, light));
             }
 
             return projections;

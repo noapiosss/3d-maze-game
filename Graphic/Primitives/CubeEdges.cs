@@ -38,7 +38,7 @@ namespace maze.Graphic.Primitives
             Color = color;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
@@ -46,7 +46,7 @@ namespace maze.Graphic.Primitives
             {
                 Line line = new(GlobalVertices[bipol.Item1], GlobalVertices[bipol.Item2], Color);
 
-                projections.AddRange(line.Project(screen, light));
+                projections.AddRange(line.Project(camera, light));
             }
 
             return projections;

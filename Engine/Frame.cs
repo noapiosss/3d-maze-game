@@ -8,9 +8,9 @@ namespace maze.Engine
 {
     public class Frame
     {
-        private static readonly char[] _brightnessGradient = " .:-=+*#%@".ToCharArray();
+        private static readonly char[] _brightnessGradient = " .:-~=+xX#%@".ToCharArray();
         //private static readonly char[] _brightnessGradient = " .`:,;'_^\"\\></-!~=)(|j?}{][ti+l7v1%yrfcJ32uIC$zwo96sngaT5qpkYVOL40&mG8*xhedbZUSAQPFDXWK#RNEHBM@".ToCharArray();
-        public Screen _screen;
+        private readonly Camera _camera;
         private readonly List<Vector3> _light = new();
         private readonly List<Primitive> _primitives = new();
         private readonly float[,] _depthBuffer;
@@ -19,21 +19,21 @@ namespace maze.Engine
         private readonly ConsoleHelper _consoleHelper;
 
 
-        public Frame(Screen screen)
+        public Frame(Camera camera)
         {
-            _screen = screen;
-            _pixels = new char[screen.Width, screen.Height];
-            _colors = new ConsoleColor[screen.Width, screen.Height];
-            _depthBuffer = new float[screen.Width, screen.Height];
-            _consoleHelper = new(screen.Height, screen.Width);
+            _camera = camera;
+            _pixels = new char[camera.Width, camera.Height];
+            _colors = new ConsoleColor[camera.Width, camera.Height];
+            _depthBuffer = new float[camera.Width, camera.Height];
+            _consoleHelper = new(camera.Height, camera.Width);
 
-            for (int i = 0; i < _screen.Width; ++i)
+            for (int i = 0; i < camera.Width; ++i)
             {
-                for (int j = _screen.Height - 1; j >= 0; --j)
+                for (int j = camera.Height - 1; j >= 0; --j)
                 {
                     _pixels[i, j] = ' ';
                     _colors[i, j] = ConsoleColor.White;
-                    _depthBuffer[i, j] = screen.RenderDistance;
+                    _depthBuffer[i, j] = camera.RenderDistance;
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace maze.Engine
         {
             foreach (Primitive primitive in _primitives)
             {
-                foreach (ProjectedVertice projection in primitive.Project(_screen, _light[0]))
+                foreach (ProjectedVertice projection in primitive.Project(_camera, _light[0]))
                 {
                     FillPixel(projection);
                 }
@@ -73,12 +73,12 @@ namespace maze.Engine
 
         private void Clear()
         {
-            for (int i = 0; i < _screen.Width; ++i)
+            for (int i = 0; i < _camera.Width; ++i)
             {
-                for (int j = _screen.Height - 1; j >= 0; --j)
+                for (int j = _camera.Height - 1; j >= 0; --j)
                 {
                     _pixels[i, j] = ' ';
-                    _depthBuffer[i, j] = _screen.RenderDistance;
+                    _depthBuffer[i, j] = _camera.RenderDistance;
                 }
             }
         }
@@ -90,6 +90,31 @@ namespace maze.Engine
             _consoleHelper.Draw(_pixels, _colors);
 
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public void LookUp(float angle)
+        {
+            _camera.LookUp(angle);
+        }
+
+        public void LookSide(float angle)
+        {
+            _camera.LookSide(angle);
+        }
+
+        public void MoveForward(float distance)
+        {
+            _camera.MoveForward(distance);
+        }
+
+        public void MoveSide(float distance)
+        {
+            _camera.MoveSide(distance);
+        }
+
+        public void MoveUp(float distance)
+        {
+            _camera.MoveUp(distance);
         }
     }
 }

@@ -21,13 +21,13 @@ namespace maze.Graphic.Primitives
             Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
-            Vector3 rotatedCenter = screen.View(GlobalVertices[0]);
-            Vector3 projectedCenter = rotatedCenter * screen.FocalDistance / rotatedCenter.Z;
-            float projectedRadius = Radius * screen.FocalDistance / rotatedCenter.Z;
+            Vector3 rotatedCenter = camera.View(GlobalVertices[0]);
+            Vector3 projectedCenter = rotatedCenter * camera.FocalDistance / rotatedCenter.Z;
+            float projectedRadius = Radius * camera.FocalDistance / rotatedCenter.Z;
 
             for (float x = -projectedRadius; x <= projectedRadius; ++x)
             {
@@ -35,18 +35,37 @@ namespace maze.Graphic.Primitives
                 {
                     if (Math.Pow(x, 2) + Math.Pow(y, 2) <= Math.Pow(projectedRadius, 2))
                     {
-                        Vector3 origin = Intersections.LineSphereIntersection(
+                        if (Intersections.LineSphereIntersection(
                             Vector3.Zero,
-                            new(x + projectedCenter.X, y + projectedCenter.Y, screen.FocalDistance),
+                            new(x + projectedCenter.X, y + projectedCenter.Y, camera.FocalDistance),
                             rotatedCenter,
-                            Radius
-                        );
-
-                        Vector3 normal = origin - rotatedCenter;
-
-                        if (ProjectedVerticeIsInsideScreen((int)(x + projectedCenter.X), (int)(y + projectedCenter.Y), origin, normal, screen, light, out ProjectedVertice projection))
+                            Radius,
+                            out Vector3 origin1,
+                            out Vector3 origin2))
                         {
-                            projections.Add(projection);
+                            if (ProjectedVerticeIsInsideScreen(
+                                x + projectedCenter.X,
+                                y + projectedCenter.Y,
+                                origin1,
+                                origin1 - rotatedCenter,
+                                camera,
+                                light,
+                                out ProjectedVertice projection))
+                            {
+                                projections.Add(projection);
+                            }
+
+                            if (ProjectedVerticeIsInsideScreen(
+                                x + projectedCenter.X,
+                                y + projectedCenter.Y,
+                                origin2,
+                                origin2 - rotatedCenter,
+                                camera,
+                                light,
+                                out projection))
+                            {
+                                projections.Add(projection);
+                            }
                         }
                     }
                 }

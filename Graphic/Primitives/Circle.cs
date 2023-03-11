@@ -32,15 +32,15 @@ namespace maze.Graphic.Primitives
             Normal = Vector3.Zero;
         }
 
-        public override ICollection<ProjectedVertice> Project(Screen screen, Vector3 light)
+        public override ICollection<ProjectedVertice> Project(Camera camera, Vector3 light)
         {
             List<ProjectedVertice> projections = new();
 
             Pivot rotatedPivot = new(
-                screen.View(GlobalVertices[0]),
-                screen.LookAt(Pivot.Forward),
-                screen.LookAt(Pivot.Up),
-                screen.LookAt(Pivot.Right)
+                camera.View(GlobalVertices[0]),
+                camera.LookAt(Pivot.Forward),
+                camera.LookAt(Pivot.Up),
+                camera.LookAt(Pivot.Right)
             );
 
             Vector3 W1 = Pivot.ToGlobalCoords(new(-Radius, -Radius, 0));
@@ -48,16 +48,16 @@ namespace maze.Graphic.Primitives
             Vector3 Y1 = Pivot.ToGlobalCoords(new(Radius, Radius, 0));
             Vector3 Z1 = Pivot.ToGlobalCoords(new(Radius, -Radius, 0));
 
-            Vector3 W = screen.View(W1);
-            Vector3 X = screen.View(X1);
-            Vector3 Y = screen.View(Y1);
-            Vector3 Z = screen.View(Z1);
+            Vector3 W = camera.View(W1);
+            Vector3 X = camera.View(X1);
+            Vector3 Y = camera.View(Y1);
+            Vector3 Z = camera.View(Z1);
 
             Ellipse ellipse = new(
-                W * screen.FocalDistance / W.Z,
-                X * screen.FocalDistance / X.Z,
-                Y * screen.FocalDistance / Y.Z,
-                Z * screen.FocalDistance / Z.Z
+                W * camera.FocalDistance / W.Z,
+                X * camera.FocalDistance / X.Z,
+                Y * camera.FocalDistance / Y.Z,
+                Z * camera.FocalDistance / Z.Z
             );
 
             for (float x = -ellipse.RadiusA; x <= ellipse.RadiusA; ++x)
@@ -65,31 +65,23 @@ namespace maze.Graphic.Primitives
                 float y1 = (float)(ellipse.RadiusB * Math.Sqrt(1 - (x * x / (ellipse.RadiusA * ellipse.RadiusA))));
                 float y2 = (float)(-ellipse.RadiusB * Math.Sqrt(1 - (x * x / (ellipse.RadiusA * ellipse.RadiusA))));
 
-                Vector3 point1 = new Vector3(x, y1, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
-                Vector3 point2 = new Vector3(x, y2, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+                Vector3 point1 = new Vector3(x, y1, camera.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, camera.FocalDistance);
+                Vector3 point2 = new Vector3(x, y2, camera.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, camera.FocalDistance);
 
-                Vector3 origin1 = Intersections.LinePlaneIntersection(
-                    Vector3.Zero,
-                    point1,
-                    rotatedPivot.Forward,
-                    rotatedPivot.Center
-                );
-
-                Vector3 origin2 = Intersections.LinePlaneIntersection(
-                    Vector3.Zero,
-                    point2,
-                    rotatedPivot.Forward,
-                    rotatedPivot.Center
-                );
-
-                if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, screen, light, out ProjectedVertice projection))
+                if (Intersections.LinePlaneIntersection(Vector3.Zero, point1, rotatedPivot.Forward, rotatedPivot.Center, out Vector3 origin1))
                 {
-                    projections.Add(projection);
+                    if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
                 }
 
-                if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, screen, light, out projection))
+                if (Intersections.LinePlaneIntersection(Vector3.Zero, point2, rotatedPivot.Forward, rotatedPivot.Center, out Vector3 origin2))
                 {
-                    projections.Add(projection);
+                    if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
                 }
             }
 
@@ -98,31 +90,23 @@ namespace maze.Graphic.Primitives
                 float x1 = (float)(ellipse.RadiusA * Math.Sqrt(1 - (y * y / (ellipse.RadiusB * ellipse.RadiusB))));
                 float x2 = (float)(-ellipse.RadiusA * Math.Sqrt(1 - (y * y / (ellipse.RadiusB * ellipse.RadiusB))));
 
-                Vector3 point1 = new Vector3(x1, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
-                Vector3 point2 = new Vector3(x2, y, screen.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, screen.FocalDistance);
+                Vector3 point1 = new Vector3(x1, y, camera.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, camera.FocalDistance);
+                Vector3 point2 = new Vector3(x2, y, camera.FocalDistance).RotateZ(ellipse.Angle) + new Vector3(ellipse.CenterX, ellipse.CenterY, camera.FocalDistance);
 
-                Vector3 origin1 = Intersections.LinePlaneIntersection(
-                    Vector3.Zero,
-                    point1,
-                    rotatedPivot.Forward,
-                    rotatedPivot.Center
-                );
-
-                Vector3 origin2 = Intersections.LinePlaneIntersection(
-                    Vector3.Zero,
-                    point2,
-                    rotatedPivot.Forward,
-                    rotatedPivot.Center
-                );
-
-                if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, screen, light, out ProjectedVertice projection))
+                if (Intersections.LinePlaneIntersection(Vector3.Zero, point1, rotatedPivot.Forward, rotatedPivot.Center, out Vector3 origin1))
                 {
-                    projections.Add(projection);
+                    if (ProjectedVerticeIsInsideScreen(point1.X, point1.Y, origin1, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
                 }
 
-                if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, screen, light, out projection))
+                if (Intersections.LinePlaneIntersection(Vector3.Zero, point2, rotatedPivot.Forward, rotatedPivot.Center, out Vector3 origin2))
                 {
-                    projections.Add(projection);
+                    if (ProjectedVerticeIsInsideScreen(point2.X, point2.Y, origin2, Normal, camera, light, out ProjectedVertice projection))
+                    {
+                        projections.Add(projection);
+                    }
                 }
             }
 
