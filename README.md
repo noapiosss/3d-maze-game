@@ -6,4 +6,4 @@
 
 Currenty realized rendering of next objects: vertice, line, polygon, cube, cube edges, sphere, circle.
 
-Also implemented: simple brightness, and camera moving/rotating.
+Also implemented: simple lightning, and camera moving/rotating.
