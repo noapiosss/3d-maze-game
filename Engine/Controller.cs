@@ -9,7 +9,6 @@ namespace maze.Engine
         {
             _frame = frame;
         }
-
         public void Run()
         {
             _frame.Render();

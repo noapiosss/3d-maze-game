@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Numerics;
 using maze.Engine.Helpers.cs;
 using maze.Graphic.Primitives.Base;
+using maze.Graphic.Primitives.Base.Interfaces;
 
 namespace maze.Engine
 {
     public class Frame
     {
-        private static readonly char[] _brightnessGradient = " .:-~=+xX#%@".ToCharArray();
+        private static readonly char[] _brightnessGradient = " .:-~=+#%@".ToCharArray();
         //private static readonly char[] _brightnessGradient = " .`:,;'_^\"\\></-!~=)(|j?}{][ti+l7v1%yrfcJ32uIC$zwo96sngaT5qpkYVOL40&mG8*xhedbZUSAQPFDXWK#RNEHBM@".ToCharArray();
         private readonly Camera _camera;
         private readonly List<Vector3> _light = new();
-        private readonly List<Primitive> _primitives = new();
+        private readonly List<IProjectible> _objects3D = new();
         private readonly float[,] _depthBuffer;
         private readonly char[,] _pixels;
         private readonly ConsoleColor[,] _colors;
@@ -45,14 +46,14 @@ namespace maze.Engine
 
         public void AddPrimitive(Primitive primitive)
         {
-            _primitives.Add(primitive);
+            _objects3D.Add(primitive);
         }
 
         private void Project()
         {
-            foreach (Primitive primitive in _primitives)
+            foreach (IProjectible object3D in _objects3D)
             {
-                foreach (ProjectedVertice projection in primitive.Project(_camera, _light[0]))
+                foreach (ProjectedVertice projection in object3D.Project(_camera, _light[0]))
                 {
                     FillPixel(projection);
                 }

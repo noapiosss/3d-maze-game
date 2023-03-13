@@ -56,8 +56,8 @@ namespace maze.Graphic.Primitives.Base
         {
             projection = new()
             {
-                X = (int)x + (camera.Width / 2),
-                Y = (int)y + (camera.Height / 2),
+                X = (int)Math.Round(x) + (camera.Width / 2),
+                Y = (int)Math.Round(y) + (camera.Height / 2),
                 Origin = origin,
                 Brightness = GetBrightness(origin, originNormal, camera.View(light)),
                 Color = Color
